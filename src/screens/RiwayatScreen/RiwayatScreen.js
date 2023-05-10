@@ -18,16 +18,16 @@ const RiwayatScreen = () => {
   useEffect(() => {
     console.log(userInfo.information.id);
     axios
-      .get(`${BASE_URL}/riwayat_pembelian/${userInfo.information.id}`, {
+      .get(`${BASE_URL}/history_order/ ${userInfo.information.id}`, {
         headers: {Authorization: `Bearer ${userInfo.token}`},
       })
       .then(res => res.data)
-      .then(data => setListRiwayatPembelian(data.data))
+      .then(data => setListRiwayatPembelian(data.history_order))
 
       .catch(e => {
         console.log(`register error ${e}`);
       });
-
+    console.log(listRiwayatPembelian);
     return () => {};
   }, []);
 
