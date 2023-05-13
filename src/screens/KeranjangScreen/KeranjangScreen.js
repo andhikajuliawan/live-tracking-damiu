@@ -11,6 +11,7 @@ import {
   Spinner,
   Center,
   Pressable,
+  View,
 } from 'native-base';
 import React, {useEffect, useState, useContext} from 'react';
 
@@ -57,7 +58,7 @@ const KeranjangScreen = ({route}) => {
         headers: {Authorization: `Bearer ${userInfo.token}`},
       })
       .then(res => res.data)
-      .then(data => setListKeranjang(data.data))
+      .then(data => setListKeranjang(data.cart))
       .catch(e => {
         console.log(`register error ${e}`);
       });
@@ -65,9 +66,9 @@ const KeranjangScreen = ({route}) => {
   };
 
   let subTotal = 0;
-  // for (let index = 0; index < listKeranjang.length; index++) {
-  //   subTotal += parseInt(listKeranjang[index].product_price);
-  // }
+  for (let index = 0; index < listKeranjang.length; index++) {
+    subTotal += parseInt(listKeranjang[index].product_price);
+  }
 
   const onPressBeli = () => {
     if (subTotal == 0) {
@@ -197,6 +198,8 @@ const KeranjangScreen = ({route}) => {
     }
   };
 
+  const renderItem = () =>{};
+
   return (
     <Box flex={1} bgColor="#fff">
       <HStack mt={5} mb={4} alignItems="center" px={4}>
@@ -233,6 +236,7 @@ const KeranjangScreen = ({route}) => {
           ))} */}
           <FlatList
             data={listKeranjang}
+            
             renderItem={({item, index}) => (
               <HStack
                 bgColor="#fff"
@@ -308,8 +312,10 @@ const KeranjangScreen = ({route}) => {
                 </VStack>
               </HStack>
             )}
+            
             keyExtractor={item => item.id}
           />
+          
 
           <Box
             mx={4}

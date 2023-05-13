@@ -1,4 +1,4 @@
-import {Text, Box, HStack, Divider, ScrollView} from 'native-base';
+import {Text, Box, HStack, Divider, ScrollView,Spinner} from 'native-base';
 import React, {useEffect, useState, useContext} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomListPembelian from '../../components/Riwayat/CustomListPembelian/CustomListPembelian';
@@ -14,8 +14,10 @@ const RiwayatScreen = () => {
   const navigation = useNavigation();
 
   const [listRiwayatPembelian, setListRiwayatPembelian] = useState([]);
+  const [isLoadingRiwayat,setIsLoadingRiwayat]=useState(false);
 
   useEffect(() => {
+    setIsLoadingRiwayat(true);
     console.log(userInfo.information.id);
     axios
       .get(`${BASE_URL}/history_order/ ${userInfo.information.id}`, {
@@ -28,6 +30,8 @@ const RiwayatScreen = () => {
         console.log(`register error ${e}`);
       });
     console.log(listRiwayatPembelian);
+    setIsLoadingRiwayat(false);
+
     return () => {};
   }, []);
 
@@ -53,7 +57,8 @@ const RiwayatScreen = () => {
         </Text>
       </HStack>
       <Divider thickness={0.5} />
-      <ScrollView showsVerticalScrollIndicator={false} bgColor="#fff" mb={69}>
+      {isLoadingRiwayat? <Spinner color="#3DADE2" flex={1} size="lg" />:
+      <ScrollView showsVerticalScrollIndicator={false} bgColor="#fff" mb={69} >
         {listRiwayatPembelian.map((list, index) => (
           <CustomListPembelian
             key={index}
@@ -66,7 +71,8 @@ const RiwayatScreen = () => {
             onPressDetails={onPressDeatils}
           />
         ))}
-      </ScrollView>
+      </ScrollView>}
+      
     </Box>
   );
 };

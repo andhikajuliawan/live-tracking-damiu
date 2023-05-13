@@ -10,7 +10,7 @@ const CustomListPembelian = ({
   status,
 }) => {
   return (
-    <Box mx={4} px={5} py={4} bg="#fff" borderRadius={10} shadow={3} mt={3}>
+    <Box mx={4} px={5} py={4} bg="#fff" borderRadius={10} shadow={3} mt={2} mb={2}>
       <HStack justifyContent="space-between">
         <Text fontSize={14} fontFamily="Poppins-Bold" mb={2} color="#223263">
           Order No {order}
