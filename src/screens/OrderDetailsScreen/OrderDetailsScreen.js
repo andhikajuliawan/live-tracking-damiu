@@ -1,22 +1,36 @@
-import {HStack, Divider, Text, Box} from 'native-base';
-import React, {useEffect, useState} from 'react';
+import {HStack, Divider, Text, Box, Spinner} from 'native-base';
+import React, {useContext, useEffect, useState} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
 import {CustomListProduk} from '../../components/OrderDetails';
 
-const OrderDetailsScreen = () => {
+import {AuthContext} from '../../context/AuthContext';
+import axios from 'axios';
+import {BASE_URL} from '../../config';
+
+const OrderDetailsScreen = ({route}) => {
   const navigation = useNavigation();
 
   const [listProduk, setListProduk] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const {userInfo} = useContext(AuthContext);
 
   useEffect(() => {
-    // Data Dummy
-    const listProduk = [
-      {namaProduk: 'Club air Mineral 600ml', jumlah: 1, harga: 3500},
-      {namaProduk: 'Club air Mineral 1000ml', jumlah: 1, harga: 6000},
-    ];
+    console.log(route.params.id);
+    setIsLoading(true);
+    axios
+      .get(`${BASE_URL}/customer_order_detail/ ${route.params.id.id}`, {
+        headers: {Authorization: `Bearer ${userInfo.token}`},
+      })
+      .then(res => res.data)
+      .then(data => setListProduk(data.order_detail))
 
-    setListProduk(listProduk);
+      .catch(e => {
+        console.log(`register error ${e}`);
+      });
+    setIsLoading(false);
+
     return () => {};
   }, []);
 
@@ -36,109 +50,134 @@ const OrderDetailsScreen = () => {
         </Text>
       </HStack>
       <Divider thickness={0.5} />
-      <Box mx={4} px={5} py={4} bg="#fff" borderRadius={10} shadow={3} mt={3}>
-        <HStack justifyContent="space-between">
-          <Text fontSize={14} fontFamily="Poppins-Bold" mb={2} color="#223263">
-            Order No 1974
-          </Text>
-          <Text
-            fontSize={12}
-            fontFamily="Poppins-Regular"
-            mb={2}
-            color="#9098B1">
-            14-05-2022
-          </Text>
-        </HStack>
-        <HStack justifyContent="space-between">
-          <Text
-            fontSize={12}
-            fontFamily="Poppins-Regular"
-            mb={2}
-            color="#9098B1">
-            status :{' '}
-          </Text>
-          <HStack>
-            <Text
-              fontSize={12}
-              fontFamily="Poppins-Regular"
-              mb={2}
-              color="#2AA952">
-              Berhasil
-            </Text>
-          </HStack>
-        </HStack>
-      </Box>
 
-      {listProduk.map((list, index) => (
-        <CustomListProduk
-          key={index}
-          source={list}
-          namaProduk={list.namaProduk}
-          jumlah={list.jumlah}
-          hargaProduk={list.harga}
-        />
-      ))}
+      {isLoading ? (
+        <Spinner color="#3DADE2" my={5} flex={1} size="lg" />
+      ) : (
+        <>
+          <Box
+            mx={4}
+            px={5}
+            py={4}
+            bg="#fff"
+            borderRadius={10}
+            shadow={3}
+            mt={3}>
+            <HStack justifyContent="space-between">
+              <Text
+                fontSize={14}
+                fontFamily="Poppins-Bold"
+                mb={2}
+                color="#223263">
+                Order No {route.params.id.no_order}
+              </Text>
+              <Text
+                fontSize={12}
+                fontFamily="Poppins-Regular"
+                mb={2}
+                color="#9098B1">
+                {route.params.id.order_datetime}
+              </Text>
+            </HStack>
+            <HStack justifyContent="space-between">
+              <Text
+                fontSize={12}
+                fontFamily="Poppins-Regular"
+                mb={2}
+                color="#9098B1">
+                status :
+              </Text>
+              <HStack>
+                <Text
+                  fontSize={12}
+                  fontFamily="Poppins-Regular"
+                  mb={2}
+                  color="#2AA952">
+                  {route.params.id.order_status}
+                </Text>
+              </HStack>
+            </HStack>
+          </Box>
 
-      <Box mx={4} px={5} py={4} bg="#fff" borderRadius={10} shadow={3} mt={3}>
-        <HStack justifyContent="space-between">
-          <Text
-            fontSize={10}
-            fontFamily="Poppins-Regular"
-            mb={2}
-            color="#9098B1">
-            Alamat :
-          </Text>
-          <Text
-            fontSize={10}
-            fontFamily="Poppins-Regular"
-            mb={2}
-            color="#000"
-            width="60%"
-            textAlign="left">
-            Jalan Wagir Baru II No 4F Kwangsan Sedati Sidoarjo{' '}
-          </Text>
-        </HStack>
-        <HStack justifyContent="space-between">
-          <Text
-            fontSize={10}
-            fontFamily="Poppins-Regular"
-            mb={2}
-            color="#9098B1">
-            Metode Pembayaran :
-          </Text>
-          <HStack>
-            <Text
-              fontSize={10}
-              fontFamily="Poppins-Regular"
-              mb={2}
-              color="#000"
-              width="60%"
-              textAlign="left">
-              COD (Bayar Ditempat)
-            </Text>
-          </HStack>
-        </HStack>
-        <HStack justifyContent="space-between">
-          <Text
-            fontSize={10}
-            fontFamily="Poppins-Regular"
-            mb={2}
-            color="#9098B1">
-            Total Harga :
-          </Text>
-          <HStack>
-            <Text
-              fontSize={10}
-              fontFamily="Poppins-Regular"
-              mb={2}
-              color="#000"
-              width="60%"
-              textAlign="left">
-              Rp. 17000
-            </Text>
-          </HStack>
-        </HStack>
-      </Box>
+          {listProduk.map((list, index) => (
+            <CustomListProduk
+              key={index}
+              source={list}
+              namaProduk={list.product.product_name}
+              jumlah={list.order_amount}
+              hargaProduk={list.order_price}
+            />
+          ))}
+
+          <Box
+            mx={4}
+            px={5}
+            py={4}
+            bg="#fff"
+            borderRadius={10}
+            shadow={3}
+            mt={3}>
+            <HStack justifyContent="space-between">
+              <Text
+                fontSize={10}
+                fontFamily="Poppins-Regular"
+                mb={2}
+                color="#9098B1">
+                Alamat :
+              </Text>
+              <Text
+                fontSize={10}
+                fontFamily="Poppins-Regular"
+                mb={2}
+                color="#000"
+                width="60%"
+                textAlign="left">
+                {route.params.id.order_location}
+              </Text>
+            </HStack>
+            <HStack justifyContent="space-between">
+              <Text
+                fontSize={10}
+                fontFamily="Poppins-Regular"
+                mb={2}
+                color="#9098B1">
+                Metode Pembayaran :
+              </Text>
+              <HStack>
+                <Text
+                  fontSize={10}
+                  fontFamily="Poppins-Regular"
+                  mb={2}
+                  color="#000"
+                  width="60%"
+                  textAlign="left">
+                  COD (Bayar Ditempat)
+                </Text>
+              </HStack>
+            </HStack>
+            <HStack justifyContent="space-between">
+              <Text
+                fontSize={10}
+                fontFamily="Poppins-Regular"
+                mb={2}
+                color="#9098B1">
+                Total Harga :
+              </Text>
+              <HStack>
+                <Text
+                  fontSize={10}
+                  fontFamily="Poppins-Regular"
+                  mb={2}
+                  color="#000"
+                  width="60%"
+                  textAlign="left">
+                  Rp. {route.params.id.order_price}
+                </Text>
+              </HStack>
+            </HStack>
+          </Box>
+        </>
+      )}
     </Box>
   );
 };

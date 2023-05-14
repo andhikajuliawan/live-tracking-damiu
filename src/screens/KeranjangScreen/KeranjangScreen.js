@@ -12,6 +12,7 @@ import {
   Center,
   Pressable,
   View,
+  Input,
 } from 'native-base';
 import React, {useEffect, useState, useContext} from 'react';
 
@@ -30,8 +31,11 @@ const KeranjangScreen = ({route}) => {
 
   const [listKeranjang, setListKeranjang] = useState([]);
   const [hargaOngkosKirim, setHargaOngkosKirim] = useState([]);
-  const [hargaSubTotal, setHargaSubTotal] = useState([]);
+  // const [hargaSubTotal, setHargaSubTotal] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [alamat, setAlamat] = useState('');
+  const [notes, setNotes] = useState('');
+  const [coordinate, setCoordinate] = useState('');
 
   // Alert Dialog
   const [isOpen, setIsOpen] = React.useState(false);
@@ -63,6 +67,7 @@ const KeranjangScreen = ({route}) => {
         console.log(`register error ${e}`);
       });
     setIsLoading(false);
+    console.log(listKeranjang);
   };
 
   let subTotal = 0;
@@ -84,32 +89,34 @@ const KeranjangScreen = ({route}) => {
       route.params.depo_id,
       listKeranjang.length,
       hargaOngkosKirim + subTotal,
-      userInfo.information.customer_address,
+      alamat,
+      coordinate,
+      notes,
     );
 
-    axios
-      .post(
-        `${BASE_URL}/customer_order`,
-        {
-          customer_id: userInfo.information.id,
-          depo_id: route.params.depo_id,
-          order_total_product: listKeranjang.length,
-          order_price: hargaOngkosKirim + subTotal,
-          order_location: userInfo.information.customer_address,
-          order_status: 'Berhasil',
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${userInfo.token}`,
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-        },
-      )
-      .then(res => console.log(res))
-      .catch(e => {
-        console.log(`register error ${e}`);
-      });
+    // axios
+    //   .post(
+    //     `${BASE_URL}/customer_order`,
+    //     {
+    //       customer_id: userInfo.information.id,
+    //       depo_id: route.params.depo_id,
+    //       order_total_product: listKeranjang.length,
+    //       order_price: hargaOngkosKirim + subTotal,
+    //       order_location: userInfo.information.customer_address,
+    //       order_status: 'Berhasil',
+    //     },
+    //     {
+    //       headers: {
+    //         Authorization: `Bearer ${userInfo.token}`,
+    //         Accept: 'application/json',
+    //         'Content-Type': 'application/json',
+    //       },
+    //     },
+    //   )
+    //   .then(res => console.log(res))
+    //   .catch(e => {
+    //     console.log(`register error ${e}`);
+    //   });
   };
 
   const onPressDeleteProduk = item => {
@@ -198,7 +205,7 @@ const KeranjangScreen = ({route}) => {
     }
   };
 
-  const renderItem = () =>{};
+  const renderItem = () => {};
 
   return (
     <Box flex={1} bgColor="#fff">
@@ -236,7 +243,6 @@ const KeranjangScreen = ({route}) => {
           ))} */}
           <FlatList
             data={listKeranjang}
-            
             renderItem={({item, index}) => (
               <HStack
                 bgColor="#fff"
@@ -254,7 +260,7 @@ const KeranjangScreen = ({route}) => {
                 <VStack justifyContent="space-evenly" width="100%">
                   <HStack justifyContent="space-between" width="70%">
                     <Text fontFamily="Poppins-Bold" fontSize={14}>
-                      {item.namaProduk}
+                      {item.product.product_name}
                     </Text>
                     <Ionicons
                       name="trash-outline"
@@ -312,10 +318,8 @@ const KeranjangScreen = ({route}) => {
                 </VStack>
               </HStack>
             )}
-            
             keyExtractor={item => item.id}
           />
-          
 
           <Box
             mx={4}
@@ -352,13 +356,17 @@ const KeranjangScreen = ({route}) => {
           <Box
             mx={4}
             px={5}
-            py={2}
+            py={3}
             bg="#fff"
             borderRadius={10}
             shadow={3}
             mt={3}>
-            <Text fontSize={12} fontFamily="Poppins-Bold" mb={2}>
-              Alamat Pengiriman
+            <Text
+              fontSize={12}
+              fontWeight="bold"
+              fontFamily="Poppins-Bold"
+              mb={2}>
+              Identitas penerima :
             </Text>
             <Text fontSize={12} fontFamily="Poppins-SemiBold" mb={2}>
               {userInfo.information.customer_name}
@@ -366,9 +374,67 @@ const KeranjangScreen = ({route}) => {
             <Text fontSize={10} fontFamily="Poppins-Regular" mb={2}>
               {userInfo.information.customer_phone}
             </Text>
-            <Text fontSize={10} fontFamily="Poppins-Regular" mb={2}>
-              {userInfo.information.customer_address}
+            <Text fontSize={12} fontWeight="bold" fontFamily="Poppins-Bold">
+              Lokasi pengiriman :
             </Text>
+            <Input
+              placeholder="Masukkan Alamat pengiriman"
+              variant="underlined"
+              w="100%"
+              size="sm"
+              py={1}
+              px={1}
+              mb={2}
+              onChangeText={text => setAlamat(text)}
+              value={alamat}
+            />
+            <Input
+              placeholder="catatan tambahan (opsional)"
+              variant="underlined"
+              w="100%"
+              size="sm"
+              py={1}
+              px={1}
+              mb={2}
+              onChangeText={text => setNotes(text)}
+              value={notes}
+            />
+            <HStack width="100%">
+              <VStack>
+                <Text
+                  fontSize={12}
+                  fontFamily="Poppins-SemiBold"
+                  mb={2}
+                  width="80%">
+                  Klik untuk mendapatkan lokasi saat ini
+                </Text>
+                {coordinate == '' ? (
+                  <></>
+                ) : (
+                  <Text
+                    color="#28a745"
+                    fontSize={12}
+                    fontFamily="Poppins-SemiBold"
+                    mb={2}
+                    width="80%">
+                    lokasi sudah didapatkan
+                  </Text>
+                )}
+              </VStack>
+              <Box width="30%">
+                <Center>
+                  <Button
+                    rounded="lg"
+                    width={12}
+                    height={10}
+                    onPress={() => {
+                      alert('get location'), setCoordinate('a');
+                    }}>
+                    <Ionicons name="locate-outline" color="#fff" size={20} />
+                  </Button>
+                </Center>
+              </Box>
+            </HStack>
           </Box>
           <Box
             mx={4}
@@ -433,7 +499,39 @@ const KeranjangScreen = ({route}) => {
             </HStack>
           </Box>
           {subTotal == 0 ? (
-            <Button mx={4} bgColor="#9098B1" mt={4} mb={4} borderRadius={10}>
+            <Button
+              isDisabled
+              mx={4}
+              bgColor="#3DADE2"
+              mt={4}
+              mb={4}
+              borderRadius={10}>
+              <Text fontSize={14} color="#fff" fontFamily="Poppins-Bold" my={1}>
+                Beli
+              </Text>
+            </Button>
+          ) : alamat == '' ? (
+            <Button
+              isDisabled
+              mx={4}
+              bgColor="#3DADE2"
+              mt={4}
+              mb={4}
+              borderRadius={10}
+              onPress={onPressBeli}>
+              <Text fontSize={14} color="#fff" fontFamily="Poppins-Bold" my={1}>
+                Beli
+              </Text>
+            </Button>
+          ) : coordinate == '' ? (
+            <Button
+              isDisabled
+              mx={4}
+              bgColor="#3DADE2"
+              mt={4}
+              mb={4}
+              borderRadius={10}
+              onPress={onPressBeli}>
               <Text fontSize={14} color="#fff" fontFamily="Poppins-Bold" my={1}>
                 Beli
               </Text>

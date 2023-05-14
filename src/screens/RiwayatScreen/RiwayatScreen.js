@@ -1,4 +1,4 @@
-import {Text, Box, HStack, Divider, ScrollView,Spinner} from 'native-base';
+import {Text, Box, HStack, Divider, ScrollView, Spinner} from 'native-base';
 import React, {useEffect, useState, useContext} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomListPembelian from '../../components/Riwayat/CustomListPembelian/CustomListPembelian';
@@ -14,7 +14,7 @@ const RiwayatScreen = () => {
   const navigation = useNavigation();
 
   const [listRiwayatPembelian, setListRiwayatPembelian] = useState([]);
-  const [isLoadingRiwayat,setIsLoadingRiwayat]=useState(false);
+  const [isLoadingRiwayat, setIsLoadingRiwayat] = useState(false);
 
   useEffect(() => {
     setIsLoadingRiwayat(true);
@@ -35,8 +35,9 @@ const RiwayatScreen = () => {
     return () => {};
   }, []);
 
-  const onPressDeatils = () => {
-    navigation.navigate('OrderDetails');
+  const onPressDeatils = list => {
+    navigation.navigate('OrderDetails', {id: list});
+    // console.log(list);
   };
 
   const {userInfo, isLoading, logout} = useContext(AuthContext);
@@ -57,22 +58,24 @@ const RiwayatScreen = () => {
         </Text>
       </HStack>
       <Divider thickness={0.5} />
-      {isLoadingRiwayat? <Spinner color="#3DADE2" flex={1} size="lg" />:
-      <ScrollView showsVerticalScrollIndicator={false} bgColor="#fff" mb={69} >
-        {listRiwayatPembelian.map((list, index) => (
-          <CustomListPembelian
-            key={index}
-            source={list}
-            order={list.no_order}
-            tanggal={list.order_datetime}
-            jumlah={list.order_total_product}
-            harga={list.order_price}
-            status={list.order_status}
-            onPressDetails={onPressDeatils}
-          />
-        ))}
-      </ScrollView>}
-      
+      {isLoadingRiwayat ? (
+        <Spinner color="#3DADE2" flex={1} size="lg" />
+      ) : (
+        <ScrollView showsVerticalScrollIndicator={false} bgColor="#fff" mb={69}>
+          {listRiwayatPembelian.map((list, index) => (
+            <CustomListPembelian
+              key={index}
+              source={list}
+              order={list.no_order}
+              tanggal={list.order_datetime}
+              jumlah={list.order_total_product}
+              harga={list.order_price}
+              status={list.order_status}
+              onPressDetails={() => onPressDeatils(list)}
+            />
+          ))}
+        </ScrollView>
+      )}
     </Box>
   );
 };
