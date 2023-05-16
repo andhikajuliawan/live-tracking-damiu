@@ -11,7 +11,6 @@ import {
   Spinner,
   Center,
   Pressable,
-  View,
   Input,
 } from 'native-base';
 import React, {useEffect, useState, useContext} from 'react';
@@ -24,7 +23,10 @@ import {useNavigation} from '@react-navigation/native';
 import {AuthContext} from '../../context/AuthContext';
 import axios from 'axios';
 import {BASE_URL} from '../../config';
-import {FlatList} from 'react-native';
+import {FlatList, PermissionsAndroid} from 'react-native';
+
+// untuk mendapatkan titik koordinat
+import Geolocation from 'react-native-geolocation-service';
 
 const KeranjangScreen = ({route}) => {
   const navigation = useNavigation();
@@ -35,7 +37,7 @@ const KeranjangScreen = ({route}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [alamat, setAlamat] = useState('');
   const [notes, setNotes] = useState('');
-  const [coordinate, setCoordinate] = useState('');
+  const [coordinate, setCoordinate] = useState([]);
 
   // Alert Dialog
   const [isOpen, setIsOpen] = React.useState(false);
@@ -90,7 +92,8 @@ const KeranjangScreen = ({route}) => {
       listKeranjang.length,
       hargaOngkosKirim + subTotal,
       alamat,
-      coordinate,
+      coordinate.coords.latitude,
+      coordinate.coords.longitude,
       notes,
     );
 
@@ -135,6 +138,7 @@ const KeranjangScreen = ({route}) => {
 
     getListCartProduk();
   };
+
   const onPressAddProduk = item => {
     const hargaTambah =
       parseInt(item.product_price) +
@@ -169,6 +173,7 @@ const KeranjangScreen = ({route}) => {
 
     // console.warn('tambah');
   };
+
   const onPressReduceProduk = item => {
     if (item.product_amount == 1) {
     } else {
@@ -205,7 +210,41 @@ const KeranjangScreen = ({route}) => {
     }
   };
 
-  const renderItem = () => {};
+  hasLocationPermission = async () => {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+        title: 'Cool Weather App',
+        message: 'Cool Weather App needs access to use your location',
+        buttonNegative: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
+      },
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log('You can use the app');
+      return true;
+    } else {
+      console.log('Location Permission Denied');
+      return false;
+    }
+  };
+
+  const getCoordinate = () => {
+    hasLocationPermission();
+    if (hasLocationPermission) {
+      Geolocation.getCurrentPosition(
+        position => {
+          setCoordinate(position);
+        },
+        error => {
+          // See error code charts below.
+          console.log(error.code, error.message);
+        },
+        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+      );
+    }
+  };
 
   return (
     <Box flex={1} bgColor="#fff">
@@ -427,9 +466,7 @@ const KeranjangScreen = ({route}) => {
                     rounded="lg"
                     width={12}
                     height={10}
-                    onPress={() => {
-                      alert('get location'), setCoordinate('a');
-                    }}>
+                    onPress={getCoordinate}>
                     <Ionicons name="locate-outline" color="#fff" size={20} />
                   </Button>
                 </Center>
