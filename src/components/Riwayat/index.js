@@ -1,3 +1,4 @@
 import CustomListPembelian from './CustomListPembelian/CustomListPembelian';
+import CustomListOrder from './CustomListOrder/CustomListOrder';
 
-export {CustomListPembelian};
+export {CustomListPembelian, CustomListOrder};

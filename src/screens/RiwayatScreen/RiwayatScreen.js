@@ -24,7 +24,7 @@ const RiwayatScreen = () => {
         headers: {Authorization: `Bearer ${userInfo.token}`},
       })
       .then(res => res.data)
-      .then(data => setListRiwayatPembelian(data.history_order))
+      .then(data => setListRiwayatPembelian(data.history_order.reverse()))
 
       .catch(e => {
         console.log(`register error ${e}`);
@@ -71,6 +71,7 @@ const RiwayatScreen = () => {
               jumlah={list.order_total_product}
               harga={list.order_price}
               status={list.order_status}
+              alamat={list.order_location}
               onPressDetails={() => onPressDeatils(list)}
             />
           ))}

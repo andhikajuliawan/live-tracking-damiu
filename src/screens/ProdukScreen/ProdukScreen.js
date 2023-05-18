@@ -100,7 +100,8 @@ const ProdukScreen = ({route}) => {
         shadow={3}
         marginX={0.5}
         py={2}
-        borderRadius="xl">
+        borderRadius="xl"
+        mb={1}>
         <Image
           source={require('../../../assets/images/icon-shop.png')}
           size="sm"

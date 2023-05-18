@@ -24,6 +24,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import {AuthContext} from '../context/AuthContext';
+import OrderScreen from '../screens/OrderScreen/OrderScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -41,6 +42,7 @@ const Navigation = () => {
             <Stack.Screen name="Home" component={Tabs} />
             <Stack.Screen name="Store" component={StoreScreen} />
             <Stack.Screen name="Riwayat" component={RiwayatScreen} />
+            <Stack.Screen name="Order" component={OrderScreen} />
             <Stack.Screen name="Akun" component={AkunScreen} />
             <Stack.Screen name="Produk" component={ProdukScreen} />
             <Stack.Screen name="Keranjang" component={KeranjangScreen} />
@@ -64,6 +66,8 @@ const Navigation = () => {
 export default Navigation;
 
 export function Tabs() {
+  const {userInfo, splashLoading} = useContext(AuthContext);
+
   return (
     <Tab.Navigator
       screenOptions={() => ({
@@ -81,6 +85,7 @@ export function Tabs() {
           marginBottom: 12,
         },
         headerShown: false,
+        unmountOnBlur: true,
       })}>
       <Tab.Screen
         name="HomeTab"
@@ -102,16 +107,32 @@ export function Tabs() {
           },
         }}
       />
-      <Tab.Screen
-        name="Riwayat"
-        component={RiwayatScreen}
-        options={{
-          tabBarLabel: 'Riwayat',
-          tabBarIcon: ({color, size}) => {
-            return <Ionicons name="sync-outline" size={size} color={color} />;
-          },
-        }}
-      />
+      {userInfo.user.user_category == 4 ? (
+        <Tab.Screen
+          name="Riwayat"
+          component={RiwayatScreen}
+          options={{
+            tabBarLabel: 'Riwayat',
+            tabBarIcon: ({color, size}) => {
+              return <Ionicons name="sync-outline" size={size} color={color} />;
+            },
+          }}
+        />
+      ) : (
+        <Tab.Screen
+          name="Pesanan"
+          component={OrderScreen}
+          options={{
+            tabBarLabel: 'Pesanan',
+            tabBarIcon: ({color, size}) => {
+              return (
+                <Ionicons name="receipt-outline" size={size} color={color} />
+              );
+            },
+          }}
+        />
+      )}
+
       <Tab.Screen
         name="Akun"
         component={AkunScreen}

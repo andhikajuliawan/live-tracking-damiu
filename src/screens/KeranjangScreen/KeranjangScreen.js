@@ -86,40 +86,43 @@ const KeranjangScreen = ({route}) => {
   };
 
   const onPressBeliProduk = () => {
-    console.log(
-      userInfo.information.id,
-      route.params.depo_id,
-      listKeranjang.length,
-      hargaOngkosKirim + subTotal,
-      alamat,
-      coordinate.coords.latitude,
-      coordinate.coords.longitude,
-      notes,
-    );
+    // console.log(
+    //   userInfo.information.id,
+    //   route.params.depo_id,
+    //   listKeranjang.length,
+    //   hargaOngkosKirim + subTotal,
+    //   alamat,
+    //   coordinate.coords.latitude,
+    //   coordinate.coords.longitude,
+    //   notes,
+    // );
 
-    // axios
-    //   .post(
-    //     `${BASE_URL}/customer_order`,
-    //     {
-    //       customer_id: userInfo.information.id,
-    //       depo_id: route.params.depo_id,
-    //       order_total_product: listKeranjang.length,
-    //       order_price: hargaOngkosKirim + subTotal,
-    //       order_location: userInfo.information.customer_address,
-    //       order_status: 'Berhasil',
-    //     },
-    //     {
-    //       headers: {
-    //         Authorization: `Bearer ${userInfo.token}`,
-    //         Accept: 'application/json',
-    //         'Content-Type': 'application/json',
-    //       },
-    //     },
-    //   )
-    //   .then(res => console.log(res))
-    //   .catch(e => {
-    //     console.log(`register error ${e}`);
-    //   });
+    axios
+      .post(
+        `${BASE_URL}/customer_order`,
+        {
+          customer_id: userInfo.information.id,
+          depo_id: route.params.depo_id,
+          order_total_product: listKeranjang.length,
+          order_price: hargaOngkosKirim + subTotal,
+          order_location: alamat,
+          destination_X: coordinate.coords.latitude,
+          destination_Y: coordinate.coords.longitude,
+          notes: notes,
+          order_status: 'Belum Diproses',
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+      .then(res => console.log(res))
+      .catch(e => {
+        console.log(`register error ${e}`);
+      });
   };
 
   const onPressDeleteProduk = item => {

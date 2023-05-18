@@ -1,7 +1,7 @@
 import {HStack, Text, Button, Box} from 'native-base';
 import React from 'react';
 
-const CustomListPembelian = ({
+const CustomListOrder = ({
   order,
   tanggal,
   jumlah,
@@ -9,6 +9,10 @@ const CustomListPembelian = ({
   onPressDetails,
   status,
   alamat,
+  onPressBelumDiproses,
+  onPressDiproses,
+  onPressMenungguDikirim,
+  onPressDikirim,
 }) => {
   return (
     <Box
@@ -69,9 +73,7 @@ const CustomListPembelian = ({
             success
             borderRadius={50}
             bg="#f0ad4e"
-            onPress={() => {
-              alert('proses');
-            }}>
+            onPress={onPressBelumDiproses}>
             <Text mx={3} color="#fff">
               Diproses
             </Text>
@@ -81,7 +83,7 @@ const CustomListPembelian = ({
             borderRadius={50}
             variant="outline"
             bg="#f0ad4e"
-            onPress={onPressDetails}>
+            onPress={onPressDiproses}>
             <Text mx={3} color="#fff">
               Menunggu Dikirim
             </Text>
@@ -91,7 +93,7 @@ const CustomListPembelian = ({
             borderRadius={50}
             variant="outline"
             bg="#f0ad4e"
-            onPress={onPressDetails}>
+            onPress={onPressMenungguDikirim}>
             <Text mx={3} color="#fff">
               Dikirim
             </Text>
@@ -101,7 +103,7 @@ const CustomListPembelian = ({
             borderRadius={50}
             variant="outline"
             bg="#5cb85c"
-            onPress={onPressDetails}>
+            onPress={onPressDikirim}>
             <Text mx={3} color="#fff">
               Selesai
             </Text>
@@ -118,4 +120,4 @@ const CustomListPembelian = ({
   );
 };
 
-export default CustomListPembelian;
+export default CustomListOrder;

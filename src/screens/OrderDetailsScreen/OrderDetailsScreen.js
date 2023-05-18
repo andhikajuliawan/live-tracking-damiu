@@ -1,4 +1,4 @@
-import {HStack, Divider, Text, Box, Spinner} from 'native-base';
+import {HStack, Divider, Text, Box, Spinner, Pressable} from 'native-base';
 import React, {useContext, useEffect, useState} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
@@ -97,6 +97,61 @@ const OrderDetailsScreen = ({route}) => {
                 </Text>
               </HStack>
             </HStack>
+            <Divider my={2} />
+
+            {route.params.id.order_status == 'Dikirim' ? (
+              <Pressable
+                onPress={() => {
+                  alert('pindah halaman');
+                }}>
+                <HStack justifyContent="space-between">
+                  <Text
+                    fontSize={12}
+                    fontFamily="Poppins-Regular"
+                    mb={2}
+                    color="#3DADE2">
+                    lihat Update Pengiriman
+                  </Text>
+                  <Ionicons
+                    name="chevron-forward-outline"
+                    size={18}
+                    color="#3DADE2"
+                  />
+                </HStack>
+              </Pressable>
+            ) : route.params.id.order_status == 'Belum Diproses' ? (
+              <Text
+                fontSize={12}
+                fontFamily="Poppins-Regular"
+                mb={2}
+                color="#9098B1">
+                Pesanan anda akan segera kami proses
+              </Text>
+            ) : route.params.id.order_status == 'Diproses' ? (
+              <Text
+                fontSize={12}
+                fontFamily="Poppins-Regular"
+                mb={2}
+                color="#9098B1">
+                Pesanan anda sedang kami proses
+              </Text>
+            ) : route.params.id.order_status == 'Menunggu Dikirim' ? (
+              <Text
+                fontSize={12}
+                fontFamily="Poppins-Regular"
+                mb={2}
+                color="#9098B1">
+                Pesanan anda sudah kami proses dan menunggu pengiriman
+              </Text>
+            ) : (
+              <Text
+                fontSize={12}
+                fontFamily="Poppins-Regular"
+                mb={2}
+                color="#9098B1">
+                Pesanan anda telah sampai ditujuan
+              </Text>
+            )}
           </Box>
 
           {listProduk.map((list, index) => (
