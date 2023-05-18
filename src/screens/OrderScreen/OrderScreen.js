@@ -14,6 +14,10 @@ import {useNavigation} from '@react-navigation/native';
 import OrderDetailsScreen from '../OrderDetailsScreen';
 import {TouchableOpacity} from 'react-native';
 
+// Firebase
+import database from '../../config/FIREBASE/index.js';
+import {ref, set, remove, onValue} from 'firebase/database';
+
 // untuk keperluan axios
 import {AuthContext} from '../../context/AuthContext';
 import axios from 'axios';
@@ -80,9 +84,18 @@ const OrderScreen = () => {
   const onPressDiproses = () => {
     alert('Diproses');
   };
-  const onPressMenungguDikirim = () => {
-    alert('Menunggu Dikirim');
+  const onPressMenungguDikirim = list => {
+    set(ref(database, 'damiu-order/' + list.no_order), {
+      order_id: list.id,
+      no_order: list.no_order,
+      employee_name: userInfo.user.username,
+      destination_X: list.destination_X,
+      destination_Y: list.destination_Y,
+      coordinate_X: 0,
+      coordinate_Y: 0,
+    });
   };
+
   const onPressDikirim = () => {
     alert('Dikirim');
   };
@@ -146,7 +159,7 @@ const OrderScreen = () => {
                 onPressDetails={() => onPressDetails(list)}
                 onPressBelumDiproses={() => onPressBelumDiproses()}
                 onPressDiproses={() => onPressDiproses()}
-                onPressMenungguDikirim={() => onPressMenungguDikirim()}
+                onPressMenungguDikirim={() => onPressMenungguDikirim(list)}
                 onPressDikirim={() => onPressDikirim()}
               />
             ),

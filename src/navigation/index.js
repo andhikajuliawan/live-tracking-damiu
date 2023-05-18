@@ -25,6 +25,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import {AuthContext} from '../context/AuthContext';
 import OrderScreen from '../screens/OrderScreen/OrderScreen';
+import LiveTrackingScreen from '../screens/LiveTrackingScreen/LiveTrackingScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -47,6 +48,7 @@ const Navigation = () => {
             <Stack.Screen name="Produk" component={ProdukScreen} />
             <Stack.Screen name="Keranjang" component={KeranjangScreen} />
             <Stack.Screen name="OrderDetails" component={OrderDetailsScreen} />
+            <Stack.Screen name="LiveTracking" component={LiveTrackingScreen} />
           </>
         ) : (
           <>

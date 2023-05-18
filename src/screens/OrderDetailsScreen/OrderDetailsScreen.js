@@ -34,6 +34,10 @@ const OrderDetailsScreen = ({route}) => {
     return () => {};
   }, []);
 
+  onPressLihatUpdatePengiriman = () => {
+    navigation.navigate('LiveTracking', {info: route.params});
+  };
+
   return (
     <Box bgColor="#fff" flex={1}>
       <HStack mt={5} mb={4} alignItems="center" px={4}>
@@ -100,10 +104,7 @@ const OrderDetailsScreen = ({route}) => {
             <Divider my={2} />
 
             {route.params.id.order_status == 'Dikirim' ? (
-              <Pressable
-                onPress={() => {
-                  alert('pindah halaman');
-                }}>
+              <Pressable onPress={onPressLihatUpdatePengiriman}>
                 <HStack justifyContent="space-between">
                   <Text
                     fontSize={12}
