@@ -7,6 +7,7 @@ import {
   Spinner,
   FlatList,
   Button,
+  View,
 } from 'native-base';
 import React, {useEffect, useState, useContext} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -17,6 +18,10 @@ import {TouchableOpacity} from 'react-native';
 // Firebase
 import database from '../../config/FIREBASE/index.js';
 import {ref, set, remove, onValue} from 'firebase/database';
+
+// GMaps
+import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
+import {Marker} from 'react-native-maps';
 
 // untuk keperluan axios
 import {AuthContext} from '../../context/AuthContext';
@@ -53,7 +58,8 @@ const LiveTrackingScreen = ({route}) => {
   console.log(route.params.info.id.order_datetime);
 
   return (
-    <Box bgColor="#fff" flex={1}>
+    // <
+    <View h="full" backgroundColor="#fff">
       <HStack mt={5} mb={4} alignItems="center" px={4}>
         <Ionicons
           name="chevron-back-outline"
@@ -68,66 +74,117 @@ const LiveTrackingScreen = ({route}) => {
         </Text>
       </HStack>
       <Divider thickness={0.5} />
-
       {isLoading ? (
-        <Spinner color="#3DADE2" flex={1} size="lg" />
+        <>
+          <Spinner color="cyan.500" flex={1} size="lg" />
+        </>
       ) : (
-        <Box mx={4} px={5} py={4} bg="#fff" borderRadius={10} shadow={3} mt={3}>
-          <HStack justifyContent="space-between">
-            <Text
-              fontSize={14}
-              fontFamily="Poppins-Bold"
-              mb={2}
-              color="#223263">
-              Order No. {firebaseData.no_order}
-            </Text>
-            <Text
-              fontSize={12}
-              fontFamily="Poppins-Regular"
-              mb={2}
-              color="#9098B1">
-              {route.params.info.id.order_datetime}
-            </Text>
-          </HStack>
-          <HStack justifyContent="space-between">
-            <Text
-              fontSize={12}
-              fontFamily="Poppins-Regular"
-              mb={2}
-              color="#9098B1">
-              kurir :
-            </Text>
-            <HStack>
+        <>
+          <Box
+            // mx={4}
+            px={8}
+            pb={3}
+            bg="#fff"
+            pt={3}>
+            <HStack justifyContent="space-between">
+              <Text
+                fontSize={14}
+                fontFamily="Poppins-Bold"
+                mb={2}
+                color="#223263">
+                Order No. {firebaseData.no_order}
+              </Text>
               <Text
                 fontSize={12}
                 fontFamily="Poppins-Regular"
                 mb={2}
                 color="#9098B1">
-                {firebaseData.employee_name}
+                {route.params.info.id.order_datetime}
               </Text>
             </HStack>
-          </HStack>
-          <HStack justifyContent="space-between">
-            <Text
-              fontSize={12}
-              fontFamily="Poppins-Regular"
-              mb={2}
-              color="#9098B1">
-              status :
-            </Text>
-            <HStack>
+            <HStack justifyContent="space-between">
               <Text
                 fontSize={12}
                 fontFamily="Poppins-Regular"
                 mb={2}
-                color="#2AA952">
-                {route.params.info.id.order_status}
+                color="#9098B1">
+                kurir :
               </Text>
+              <HStack>
+                <Text
+                  fontSize={12}
+                  fontFamily="Poppins-Regular"
+                  mb={2}
+                  color="#9098B1">
+                  {firebaseData.employee_name}
+                </Text>
+              </HStack>
             </HStack>
-          </HStack>
-        </Box>
+            <HStack justifyContent="space-between">
+              <Text
+                fontSize={12}
+                fontFamily="Poppins-Regular"
+                mb={2}
+                color="#9098B1">
+                status :
+              </Text>
+              <HStack>
+                <Text
+                  fontSize={12}
+                  fontFamily="Poppins-Regular"
+                  mb={2}
+                  color="#2AA952">
+                  {route.params.info.id.order_status}
+                </Text>
+              </HStack>
+            </HStack>
+          </Box>
+
+          <MapView
+            provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+            style={{flex: 1}}
+            region={{
+              latitude: parseInt(firebaseData.destination_X),
+              longitude: parseInt(firebaseData.destination_Y),
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.04,
+            }}>
+            <Marker
+              key={'customer'}
+              coordinate={{
+                latitude: parseInt(firebaseData.destination_X),
+                longitude: parseInt(firebaseData.destination_Y),
+              }}
+              title={'Lokasi saya'}
+              description={'lokasi pengiriman'}
+            />
+            {/* <Marker
+              pinColor="#FFEB3B"
+              key={'driver'}
+              coordinate={{
+                latitude: this.state.latitudeDriver,
+                longitude: this.state.longitudeDriver,
+              }}
+              title={'Driver'}
+              description={'Prengiriman'}
+            /> */}
+            {/* <MapViewDirections
+              origin={{
+                latitude: this.state.latitudeCustomer,
+                longitude: this.state.longitudeCustomer,
+              }}
+              destination={{
+                latitude: this.state.latitudeDriver,
+                longitude: this.state.longitudeDriver,
+              }}
+              apikey={'AIzaSyC_TYQGvtlUhwyhc2umVM-GjsgFjJk0j-Y'}
+              strokeWidth={5}
+              strokeColor="#4A89F3"
+            /> */}
+          </MapView>
+        </>
       )}
-    </Box>
+    </View>
   );
 };
 
