@@ -22,6 +22,7 @@ import {ref, set, remove, onValue} from 'firebase/database';
 // GMaps
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import {Marker} from 'react-native-maps';
+import MapViewDirections from 'react-native-maps-directions';
 
 // untuk keperluan axios
 import {AuthContext} from '../../context/AuthContext';
@@ -144,43 +145,44 @@ const LiveTrackingScreen = ({route}) => {
             provider={PROVIDER_GOOGLE} // remove if not using Google Maps
             style={{flex: 1}}
             region={{
-              latitude: parseInt(firebaseData.destination_X),
-              longitude: parseInt(firebaseData.destination_Y),
+              latitude: Number(firebaseData.destination_X),
+              longitude: Number(firebaseData.destination_Y),
               latitudeDelta: 0.01,
-              longitudeDelta: 0.04,
+              longitudeDelta: 0.01,
             }}>
             <Marker
+              pinColor="#4A89F3"
               key={'customer'}
               coordinate={{
-                latitude: parseInt(firebaseData.destination_X),
-                longitude: parseInt(firebaseData.destination_Y),
+                latitude: Number(firebaseData.destination_X),
+                longitude: Number(firebaseData.destination_Y),
               }}
               title={'Lokasi saya'}
               description={'lokasi pengiriman'}
             />
-            {/* <Marker
+            <Marker
               pinColor="#FFEB3B"
               key={'driver'}
               coordinate={{
-                latitude: this.state.latitudeDriver,
-                longitude: this.state.longitudeDriver,
+                latitude: Number(firebaseData.coordinate_X),
+                longitude: Number(firebaseData.coordinate_Y),
               }}
               title={'Driver'}
               description={'Prengiriman'}
-            /> */}
-            {/* <MapViewDirections
+            />
+            <MapViewDirections
               origin={{
-                latitude: this.state.latitudeCustomer,
-                longitude: this.state.longitudeCustomer,
+                latitude: Number(firebaseData.coordinate_X),
+                longitude: Number(firebaseData.coordinate_Y),
               }}
               destination={{
-                latitude: this.state.latitudeDriver,
-                longitude: this.state.longitudeDriver,
+                latitude: Number(firebaseData.destination_X),
+                longitude: Number(firebaseData.destination_Y),
               }}
               apikey={'AIzaSyC_TYQGvtlUhwyhc2umVM-GjsgFjJk0j-Y'}
               strokeWidth={5}
               strokeColor="#4A89F3"
-            /> */}
+            />
           </MapView>
         </>
       )}

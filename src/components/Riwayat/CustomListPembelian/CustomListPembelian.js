@@ -50,6 +50,14 @@ const CustomListPembelian = ({
           </Text>
         </HStack>
       </HStack>
+      <HStack justifyContent="space-between">
+        <Text fontSize={12} fontFamily="Poppins-Regular" mb={2} color="#9098B1">
+          Status :
+        </Text>
+        <Text fontSize={12} fontFamily="Poppins-Regular" mb={2}>
+          {status}
+        </Text>
+      </HStack>
       <Text fontSize={12} fontFamily="Poppins-Regular" mb={2} color="#9098B1">
         Alamat :
       </Text>
@@ -64,7 +72,7 @@ const CustomListPembelian = ({
           onPress={onPressDetails}>
           <Text mx={3}>Details</Text>
         </Button>
-        {status == 'Belum Diproses' ? (
+        {/* {status == 'Belum Diproses' ? (
           <Button
             success
             borderRadius={50}
@@ -112,7 +120,7 @@ const CustomListPembelian = ({
               Selesai
             </Text>
           </Button>
-        )}
+        )} */}
       </HStack>
     </Box>
   );

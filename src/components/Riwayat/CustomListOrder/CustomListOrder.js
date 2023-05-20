@@ -1,5 +1,6 @@
-import {HStack, Text, Button, Box} from 'native-base';
+import {HStack, Text, Button, Box, VStack, Center} from 'native-base';
 import React from 'react';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const CustomListOrder = ({
   order,
@@ -13,6 +14,8 @@ const CustomListOrder = ({
   onPressDiproses,
   onPressMenungguDikirim,
   onPressDikirim,
+  getCoordinate,
+  coordinate,
 }) => {
   return (
     <Box
@@ -60,6 +63,45 @@ const CustomListOrder = ({
       <Text fontSize={14} fontFamily="Poppins-Regular" mb={2}>
         {alamat}
       </Text>
+      {status == 'Menunggu Dikirim' ? (
+        <HStack width="100%">
+          <VStack>
+            <Text
+              fontSize={12}
+              fontFamily="Poppins-SemiBold"
+              mb={2}
+              width="80%">
+              Klik untuk mendapatkan lokasi saat ini
+            </Text>
+            {coordinate == '' ? (
+              <></>
+            ) : (
+              <Text
+                color="#28a745"
+                fontSize={12}
+                fontFamily="Poppins-SemiBold"
+                mb={2}
+                width="80%">
+                lokasi sudah didapatkan
+              </Text>
+            )}
+          </VStack>
+          <Box width="30%">
+            <Center>
+              <Button
+                rounded="lg"
+                width={12}
+                height={10}
+                onPress={getCoordinate}>
+                <Ionicons name="locate-outline" color="#fff" size={20} />
+              </Button>
+            </Center>
+          </Box>
+        </HStack>
+      ) : (
+        <></>
+      )}
+
       <HStack justifyContent="space-between" alignItems="center">
         <Button
           borderRadius={50}
@@ -89,15 +131,28 @@ const CustomListOrder = ({
             </Text>
           </Button>
         ) : status == 'Menunggu Dikirim' ? (
-          <Button
-            borderRadius={50}
-            variant="outline"
-            bg="#f0ad4e"
-            onPress={onPressMenungguDikirim}>
-            <Text mx={3} color="#fff">
-              Dikirim
-            </Text>
-          </Button>
+          coordinate == '' ? (
+            <Button
+              isDisabled
+              borderRadius={50}
+              variant="outline"
+              bg="#f0ad4e"
+              onPress={onPressMenungguDikirim}>
+              <Text mx={3} color="#fff">
+                Dikirim
+              </Text>
+            </Button>
+          ) : (
+            <Button
+              borderRadius={50}
+              variant="outline"
+              bg="#f0ad4e"
+              onPress={onPressMenungguDikirim}>
+              <Text mx={3} color="#fff">
+                Dikirim
+              </Text>
+            </Button>
+          )
         ) : status == 'Dikirim' ? (
           <Button
             borderRadius={50}
