@@ -6,6 +6,7 @@ import {
   ScrollView,
   Spinner,
   FlatList,
+  Button,
 } from 'native-base';
 import React, {useEffect, useState, useContext} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -143,28 +144,28 @@ const OrderScreen = () => {
       coordinate_Y: coordinate.coords.longitude,
     });
 
-    axios
-      .put(
-        `${BASE_URL}/customer_order/${list.id}`,
-        {
-          order_status: 'Dikirim',
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${userInfo.token}`,
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-        },
-      )
-      .then(res => console.log(res))
-      .catch(e => {
-        console.log(`register error ${e}`);
-      });
+    // axios
+    //   .put(
+    //     `${BASE_URL}/customer_order/${list.id}`,
+    //     {
+    //       order_status: 'Dikirim',
+    //     },
+    //     {
+    //       headers: {
+    //         Authorization: `Bearer ${userInfo.token}`,
+    //         Accept: 'application/json',
+    //         'Content-Type': 'application/json',
+    //       },
+    //     },
+    //   )
+    //   .then(res => console.log(res))
+    //   .catch(e => {
+    //     console.log(`register error ${e}`);
+    //   });
     getOrderDepo();
   };
 
-  const onPressDikirim = () => {
+  const onPressDikirim = list => {
     axios
       .put(
         `${BASE_URL}/customer_order/${list.id}`,
@@ -240,6 +241,7 @@ const OrderScreen = () => {
         </Text>
       </HStack>
       <Divider thickness={0.5} />
+
       <Box>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           <HStack>
@@ -284,7 +286,7 @@ const OrderScreen = () => {
                 onPressBelumDiproses={() => onPressBelumDiproses(list)}
                 onPressDiproses={() => onPressDiproses(list)}
                 onPressMenungguDikirim={() => onPressMenungguDikirim(list)}
-                onPressDikirim={() => onPressDikirim()}
+                onPressDikirim={() => onPressDikirim(list)}
               />
             ),
           )}

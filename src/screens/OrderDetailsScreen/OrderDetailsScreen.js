@@ -1,4 +1,12 @@
-import {HStack, Divider, Text, Box, Spinner, Pressable} from 'native-base';
+import {
+  HStack,
+  Divider,
+  Text,
+  Box,
+  Spinner,
+  Pressable,
+  Button,
+} from 'native-base';
 import React, {useContext, useEffect, useState} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
@@ -7,6 +15,16 @@ import {CustomListProduk} from '../../components/OrderDetails';
 import {AuthContext} from '../../context/AuthContext';
 import axios from 'axios';
 import {BASE_URL} from '../../config';
+
+// // Firebase
+import database from '../../config/FIREBASE/index.js';
+import {ref, set, remove, onValue} from 'firebase/database';
+
+// // untuk mendapatkan titik koordinat
+import Geolocation from 'react-native-geolocation-service';
+
+// Background Service
+import BackgroundService from 'react-native-background-actions';
 
 const OrderDetailsScreen = ({route}) => {
   const navigation = useNavigation();
@@ -17,7 +35,7 @@ const OrderDetailsScreen = ({route}) => {
   const {userInfo} = useContext(AuthContext);
 
   useEffect(() => {
-    console.log(route.params.id);
+    console.log(userInfo.user.user_category);
     setIsLoading(true);
     axios
       .get(`${BASE_URL}/customer_order_detail/ ${route.params.id.id}`, {
@@ -36,6 +54,64 @@ const OrderDetailsScreen = ({route}) => {
 
   onPressLihatUpdatePengiriman = () => {
     navigation.navigate('LiveTracking', {info: route.params});
+  };
+
+  // BACKGROUND SERVICE
+  const sleep = time =>
+    new Promise(resolve => setTimeout(() => resolve(), time));
+
+  // You can do anything in your task such as network requests, timers and so on,
+  // as long as it doesn't touch UI. Once your task completes (i.e. the promise is resolved),
+  // React Native will go into "paused" mode (unless there are other tasks running,
+  // or there is a foreground app).
+  const veryIntensiveTask = async taskDataArguments => {
+    // Example of an infinite loop task
+    const {delay} = taskDataArguments;
+    await new Promise(async resolve => {
+      for (let i = 0; BackgroundService.isRunning(); i++) {
+        await BackgroundService.updateNotification({
+          taskDesc: 'pengiriman' + route.params.id.no_order,
+          progressBar: 2,
+        });
+        console.log(i);
+
+        // Get Location
+        Geolocation.getCurrentPosition(info => {
+          set(ref(database, 'damiu-order/' + route.params.id.no_order), {
+            order_id: route.params.id.id,
+            no_order: route.params.id.no_order,
+            employee_name: userInfo.user.username,
+            destination_X: route.params.id.destination_X,
+            destination_Y: route.params.id.destination_Y,
+            coordinate_X: info.coords.latitude,
+            coordinate_Y: info.coords.longitude,
+          });
+        });
+        await sleep(delay);
+      }
+    });
+  };
+
+  const options = {
+    taskName: 'Sedang Melakukan Pengiriman',
+    taskTitle: 'Sedang Melakukan Pengiriman',
+    taskDesc: 'Sedang Melakukan Pengiriman',
+    taskIcon: {
+      name: 'ic_launcher',
+      type: 'mipmap',
+    },
+    color: '#ff00ff',
+    linkingURI: 'yourSchemeHere://chat/jane', // See Deep Linking for more info
+    parameters: {
+      delay: 1000,
+    },
+  };
+
+  const backgroundServiceOn = async () => {
+    await BackgroundService.start(veryIntensiveTask, options);
+  };
+  const backgroundServiceOff = async () => {
+    await BackgroundService.stop();
   };
 
   return (
@@ -233,6 +309,20 @@ const OrderDetailsScreen = ({route}) => {
             </HStack>
           </Box>
         </>
+      )}
+      {userInfo.user.user_category == 4 ? (
+        ''
+      ) : route.params.id.order_status == 'Dikirim' ? (
+        <>
+          <Button mx={3} my={3} onPress={backgroundServiceOn}>
+            Mulai Tracking
+          </Button>
+          <Button mx={3} onPress={backgroundServiceOff}>
+            Stop Tracking
+          </Button>
+        </>
+      ) : (
+        ''
       )}
     </Box>
   );
