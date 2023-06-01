@@ -80,7 +80,7 @@ const ProdukScreen = ({route}) => {
   const {userInfo, isLoading, logout} = useContext(AuthContext);
 
   // membatasi teks di Place Holder
-  const placeholder = `cari di  ${route.params.nama}`;
+  const placeholder = `cari di ${route.params.nama} `;
 
   return (
     <Box px={3} flex={1} bgColor="#fff">
@@ -122,21 +122,24 @@ const ProdukScreen = ({route}) => {
           Semua Produk
         </Text>
         <Flex direction="row" flexWrap="wrap" justifyContent="space-around">
-          {produkDepo.map((produk, index) => (
-            <CustomListProduk
-              key={index}
-              source={produk}
-              // digunakan mengambil gambar
-              // gambar={produk.gambar}
-              customer_id={userInfo.information.id}
-              produk_id={produk.id}
-              depo_id={route.params.depo_id}
-              nama={produk.product_name}
-              harga={produk.product_price}
-              stock={produk.product_stock}
-              // onPressAddProduct={onPressAddProduct}
-            />
-          ))}
+          {produkDepo.map((produk, index) => {
+            console.log(index);
+            return (
+              <CustomListProduk
+                key={index}
+                source={produk}
+                // digunakan mengambil gambar
+                // gambar={produk.gambar}
+                customer_id={userInfo.information.id}
+                produk_id={produk.id}
+                depo_id={route.params.depo_id}
+                nama={produk.product_name}
+                harga={produk.product_price}
+                stock={produk.product_stock}
+                // onPressAddProduct={onPressAddProduct}
+              />
+            );
+          })}
         </Flex>
       </ScrollView>
     </Box>

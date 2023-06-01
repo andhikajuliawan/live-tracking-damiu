@@ -17,6 +17,21 @@ const CustomListOrder = ({
   getCoordinate,
   coordinate,
 }) => {
+  const date = tanggal;
+  const date1 = new Date(date);
+  const date2 = new Date();
+  const secondDifference = (date2 - date1) / 1000;
+  let totalMinutes = Math.floor(secondDifference / 60);
+  let seconds = Math.floor(secondDifference % 60);
+  let hours = Math.floor(totalMinutes / 60);
+  let minutes = Math.floor(totalMinutes % 60);
+  let jumlahJam = 0;
+  if (hours == 0) {
+    jumlahJam = minutes + ' menit ' + seconds + 'detik';
+  } else {
+    jumlahJam = hours + ' jam ' + minutes + ' menit ' + seconds + 'detik';
+  }
+
   return (
     <Box
       mx={4}
@@ -37,7 +52,7 @@ const CustomListOrder = ({
           Order No {order}
         </Text>
         <Text fontSize={12} fontFamily="Poppins-Regular" mb={2} color="#9098B1">
-          {tanggal}
+          {status == 'Selesai' ? tanggal : jumlahJam}
         </Text>
       </HStack>
       <HStack justifyContent="space-between">
@@ -63,40 +78,32 @@ const CustomListOrder = ({
       <Text fontSize={14} fontFamily="Poppins-Regular" mb={2}>
         {alamat}
       </Text>
-      {status == 'Menunggu Dikirim' ? (
-        <HStack width="100%">
+      {status == 'Belum Diproses' ? (
+        <HStack width="100%" justifyContent="space-between" mb={4}>
           <VStack>
-            <Text
-              fontSize={12}
-              fontFamily="Poppins-SemiBold"
-              mb={2}
-              width="80%">
-              Klik untuk mendapatkan lokasi saat ini
-            </Text>
             {coordinate == '' ? (
-              <></>
+              <Text
+                fontSize={12}
+                fontFamily="Poppins-SemiBold"
+                mb={2}
+                width="100%">
+                Klik untuk mendapatkan lokasi saat ini
+              </Text>
             ) : (
               <Text
                 color="#28a745"
                 fontSize={12}
                 fontFamily="Poppins-SemiBold"
                 mb={2}
-                width="80%">
+                width="100%">
                 lokasi sudah didapatkan
               </Text>
             )}
           </VStack>
-          <Box width="30%">
-            <Center>
-              <Button
-                rounded="lg"
-                width={12}
-                height={10}
-                onPress={getCoordinate}>
-                <Ionicons name="locate-outline" color="#fff" size={20} />
-              </Button>
-            </Center>
-          </Box>
+
+          <Button rounded="lg" width={12} height={10} onPress={getCoordinate}>
+            <Ionicons name="locate-outline" color="#fff" size={20} />
+          </Button>
         </HStack>
       ) : (
         <></>
@@ -111,33 +118,13 @@ const CustomListOrder = ({
           <Text mx={3}>Details</Text>
         </Button>
         {status == 'Belum Diproses' ? (
-          <Button
-            success
-            borderRadius={50}
-            bg="#f0ad4e"
-            onPress={onPressBelumDiproses}>
-            <Text mx={3} color="#fff">
-              Diproses
-            </Text>
-          </Button>
-        ) : status == 'Diproses' ? (
-          <Button
-            borderRadius={50}
-            variant="outline"
-            bg="#f0ad4e"
-            onPress={onPressDiproses}>
-            <Text mx={3} color="#fff">
-              Menunggu Dikirim
-            </Text>
-          </Button>
-        ) : status == 'Menunggu Dikirim' ? (
           coordinate == '' ? (
             <Button
               isDisabled
               borderRadius={50}
               variant="outline"
               bg="#f0ad4e"
-              onPress={onPressMenungguDikirim}>
+              onPress={onPressBelumDiproses}>
               <Text mx={3} color="#fff">
                 Dikirim
               </Text>
@@ -147,7 +134,7 @@ const CustomListOrder = ({
               borderRadius={50}
               variant="outline"
               bg="#f0ad4e"
-              onPress={onPressMenungguDikirim}>
+              onPress={onPressBelumDiproses}>
               <Text mx={3} color="#fff">
                 Dikirim
               </Text>

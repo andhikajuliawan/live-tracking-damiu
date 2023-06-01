@@ -36,14 +36,7 @@ const OrderScreen = () => {
   const [activeCategories, setActiveCategories] = useState(0);
   const [filterCategories, setfilterCategories] = useState([]);
   const [categorie, setCategorie] = useState('Semua');
-  const categories = [
-    'Semua',
-    'Belum Diproses',
-    'Diproses',
-    'Menunggu Dikirim',
-    'Dikirim',
-    'Selesai',
-  ];
+  const categories = ['Semua', 'Belum Diproses', 'Dikirim', 'Selesai'];
   const [coordinate, setCoordinate] = useState([]);
 
   useEffect(() => {
@@ -89,51 +82,52 @@ const OrderScreen = () => {
     navigation.navigate('OrderDetails', {id: list});
     // console.log(list);
   };
+
+  // const onPressBelumDiproses = list => {
+  //   axios
+  //     .put(
+  //       `${BASE_URL}/customer_order/${list.id}`,
+  //       {
+  //         order_status: 'Diproses',
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${userInfo.token}`,
+  //           Accept: 'application/json',
+  //           'Content-Type': 'application/json',
+  //         },
+  //       },
+  //     )
+  //     .then(res => console.log(res))
+  //     .catch(e => {
+  //       console.log(`register error ${e}`);
+  //     });
+  //   getOrderDepo();
+  // };
+
+  // const onPressDiproses = list => {
+  //   axios
+  //     .put(
+  //       `${BASE_URL}/customer_order/${list.id}`,
+  //       {
+  //         order_status: 'Menunggu Dikirim',
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${userInfo.token}`,
+  //           Accept: 'application/json',
+  //           'Content-Type': 'application/json',
+  //         },
+  //       },
+  //     )
+  //     .then(res => console.log(res))
+  //     .catch(e => {
+  //       console.log(`register error ${e}`);
+  //     });
+  //   getOrderDepo();
+  // };
+
   const onPressBelumDiproses = list => {
-    axios
-      .put(
-        `${BASE_URL}/customer_order/${list.id}`,
-        {
-          order_status: 'Diproses',
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${userInfo.token}`,
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-        },
-      )
-      .then(res => console.log(res))
-      .catch(e => {
-        console.log(`register error ${e}`);
-      });
-    getOrderDepo();
-  };
-
-  const onPressDiproses = list => {
-    axios
-      .put(
-        `${BASE_URL}/customer_order/${list.id}`,
-        {
-          order_status: 'Menunggu Dikirim',
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${userInfo.token}`,
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-        },
-      )
-      .then(res => console.log(res))
-      .catch(e => {
-        console.log(`register error ${e}`);
-      });
-    getOrderDepo();
-  };
-
-  const onPressMenungguDikirim = list => {
     set(ref(database, 'damiu-order/' + list.no_order), {
       order_id: list.id,
       no_order: list.no_order,
@@ -143,25 +137,24 @@ const OrderScreen = () => {
       coordinate_X: coordinate.coords.latitude,
       coordinate_Y: coordinate.coords.longitude,
     });
-
-    // axios
-    //   .put(
-    //     `${BASE_URL}/customer_order/${list.id}`,
-    //     {
-    //       order_status: 'Dikirim',
-    //     },
-    //     {
-    //       headers: {
-    //         Authorization: `Bearer ${userInfo.token}`,
-    //         Accept: 'application/json',
-    //         'Content-Type': 'application/json',
-    //       },
-    //     },
-    //   )
-    //   .then(res => console.log(res))
-    //   .catch(e => {
-    //     console.log(`register error ${e}`);
-    //   });
+    axios
+      .put(
+        `${BASE_URL}/customer_order/${list.id}`,
+        {
+          order_status: 'Dikirim',
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+      .then(res => console.log(res))
+      .catch(e => {
+        console.log(`register error ${e}`);
+      });
     getOrderDepo();
   };
 

@@ -12,6 +12,8 @@ import {
   Center,
   Pressable,
   Input,
+  View,
+  Fab,
 } from 'native-base';
 import React, {useEffect, useState, useContext} from 'react';
 
@@ -28,6 +30,10 @@ import {FlatList, PermissionsAndroid} from 'react-native';
 // untuk mendapatkan titik koordinat
 import Geolocation from 'react-native-geolocation-service';
 
+// Untuk Google Maps API
+import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
+import {Marker} from 'react-native-maps';
+
 const KeranjangScreen = ({route}) => {
   const navigation = useNavigation();
 
@@ -38,6 +44,10 @@ const KeranjangScreen = ({route}) => {
   const [alamat, setAlamat] = useState('');
   const [notes, setNotes] = useState('');
   const [coordinate, setCoordinate] = useState([]);
+  const [coordinateX, setCoordinateX] = useState(0);
+  const [coordinateY, setCoordinateY] = useState(0);
+  const [inputCoordinate, setInputCoordinate] = useState('');
+  const [miniMap, setMiniMap] = useState(false);
 
   // Alert Dialog
   const [isOpen, setIsOpen] = React.useState(false);
@@ -69,7 +79,7 @@ const KeranjangScreen = ({route}) => {
         console.log(`register error ${e}`);
       });
     setIsLoading(false);
-    console.log(listKeranjang);
+    // console.log(listKeranjang);
   };
 
   let subTotal = 0;
@@ -106,8 +116,8 @@ const KeranjangScreen = ({route}) => {
           order_total_product: listKeranjang.length,
           order_price: hargaOngkosKirim + subTotal,
           order_location: alamat,
-          destination_X: coordinate.coords.latitude,
-          destination_Y: coordinate.coords.longitude,
+          destination_X: coordinateX,
+          destination_Y: coordinateY,
           notes: notes,
           order_status: 'Belum Diproses',
         },
@@ -249,6 +259,48 @@ const KeranjangScreen = ({route}) => {
     }
   };
 
+  // Function untuk MiniMap
+
+  getLocation = () => {
+    hasLocationPermission();
+    if (hasLocationPermission) {
+      Geolocation.getCurrentPosition(
+        posisi => {
+          setCoordinateX(posisi.coords.latitude),
+            setCoordinateY(posisi.coords.longitude);
+        },
+        error => {
+          // See error code charts below.
+          console.log(error.code, error.message);
+        },
+        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+      );
+    }
+  };
+  getCoordinateFromInput = () => {
+    fetch(
+      'https://maps.googleapis.com/maps/api/geocode/json?&address=' +
+        inputCoordinate +
+        '&key=AIzaSyC_TYQGvtlUhwyhc2umVM-GjsgFjJk0j-Y',
+    )
+      .then(response => response.json())
+      .then(responseJson => {
+        console.log(
+          'ADDRESS GEOCODE is BACK!! => ' +
+            JSON.stringify(responseJson.results[0].geometry.location),
+        );
+
+        setCoordinateX(responseJson.results[0].geometry.location.lat);
+
+        setCoordinateY(responseJson.results[0].geometry.location.lng);
+      });
+  };
+  getAddress = e => {
+    console.log(e.nativeEvent.coordinate);
+    setCoordinateX(e.nativeEvent.coordinate.latitude);
+    setCoordinateY(e.nativeEvent.coordinate.longitude);
+  };
+
   return (
     <Box flex={1} bgColor="#fff">
       <HStack mt={5} mb={4} alignItems="center" px={4}>
@@ -272,18 +324,7 @@ const KeranjangScreen = ({route}) => {
         </Center>
       ) : (
         <ScrollView>
-          {/* {listKeranjang.map((list, index) => (
-            <CustomListProduk
-              key={index}
-              source={list}
-              produk_id={list.id}
-              namaProduk={list.namaProduk}
-              jumlah={list.product_amount}
-              hargaProduk={list.product_price}
-              depo_id={depo_id}
-            />
-          ))} */}
-          <FlatList
+          {/* <FlatList
             data={listKeranjang}
             renderItem={({item, index}) => (
               <HStack
@@ -295,7 +336,7 @@ const KeranjangScreen = ({route}) => {
                 mt={3}
                 mb={1}>
                 <Image
-                  // source={require('../../../../assets/images/aqua.png')}
+                  source={require('../../../assets/images/aqua.png')}
                   size="md"
                   alt="produk"
                 />
@@ -361,7 +402,87 @@ const KeranjangScreen = ({route}) => {
               </HStack>
             )}
             keyExtractor={item => item.id}
-          />
+          /> */}
+
+          {listKeranjang.map((item, index) => {
+            key = {index};
+            source = {item};
+            return (
+              <HStack
+                bgColor="#fff"
+                mx={4}
+                borderRadius={10}
+                shadow={3}
+                py={2}
+                mt={3}
+                mb={1}>
+                <Image
+                  source={require('../../../assets/images/aqua.png')}
+                  size="md"
+                  alt="produk"
+                />
+                <VStack justifyContent="space-evenly" width="100%">
+                  <HStack justifyContent="space-between" width="70%">
+                    <Text fontFamily="Poppins-Bold" fontSize={14}>
+                      {item.product.product_name}
+                    </Text>
+                    <Ionicons
+                      name="trash-outline"
+                      color="#9098B1"
+                      size={25}
+                      onPress={() => onPressDeleteProduk(item)}
+                    />
+                  </HStack>
+                  <HStack justifyContent="space-between" width="70%">
+                    <Text
+                      fontFamily="Poppins-Medium"
+                      fontSize={14}
+                      color="#3DADE2">
+                      Rp. {item.product_price}
+                    </Text>
+                    <HStack bgColor="#EBF0FF" borderRadius={5} p={1}>
+                      <Pressable
+                        bgColor="#fff"
+                        borderLeftRadius={5}
+                        onPress={() => onPressAddProduk(item)}>
+                        <Ionicons
+                          name="add-outline"
+                          color="#9098B1"
+                          size={23}
+                        />
+                      </Pressable>
+                      <Text mx={4} color="#9098B1">
+                        {item.product_amount}
+                      </Text>
+                      {item.product_amount == 1 ? (
+                        <Pressable
+                          bgColor="#EBF0FF"
+                          borderRightRadius={5}
+                          onPress={() => onPressReduceProduk(item)}>
+                          <Ionicons
+                            name="remove-outline"
+                            color="#9098B1"
+                            size={23}
+                          />
+                        </Pressable>
+                      ) : (
+                        <Pressable
+                          bgColor="#fff"
+                          borderRightRadius={5}
+                          onPress={() => onPressReduceProduk(item)}>
+                          <Ionicons
+                            name="remove-outline"
+                            color="#9098B1"
+                            size={23}
+                          />
+                        </Pressable>
+                      )}
+                    </HStack>
+                  </HStack>
+                </VStack>
+              </HStack>
+            );
+          })}
 
           <Box
             mx={4}
@@ -394,7 +515,6 @@ const KeranjangScreen = ({route}) => {
               </VStack>
             </HStack>
           </Box>
-          {/* <Button onPress={testing}>tes</Button> */}
           <Box
             mx={4}
             px={5}
@@ -441,7 +561,7 @@ const KeranjangScreen = ({route}) => {
               onChangeText={text => setNotes(text)}
               value={notes}
             />
-            <HStack width="100%">
+            {/* <HStack width="100%">
               <VStack>
                 <Text
                   fontSize={12}
@@ -474,7 +594,116 @@ const KeranjangScreen = ({route}) => {
                   </Button>
                 </Center>
               </Box>
-            </HStack>
+            </HStack> */}
+            {coordinateX == 0 && coordinateY == 0 ? (
+              <Text
+                color="#9098B1"
+                fontSize={12}
+                fontFamily="Poppins-SemiBold"
+                mb={2}
+                width="80%">
+                lokasi belum didapatkan
+              </Text>
+            ) : (
+              <Text
+                color="#28a745"
+                fontSize={12}
+                fontFamily="Poppins-SemiBold"
+                mb={2}
+                width="80%">
+                lokasi sudah didapatkan
+              </Text>
+            )}
+
+            <Box>
+              <Pressable
+                onPress={() => {
+                  miniMap ? setMiniMap(false) : setMiniMap(true);
+                }}>
+                <HStack justifyContent="space-between">
+                  <Text
+                    fontSize={12}
+                    fontFamily="Poppins-SemiBold"
+                    mb={2}
+                    color="#3DADE2">
+                    Klik untuk mendapatkan lokasi saat ini
+                  </Text>
+                  {miniMap ? (
+                    <Ionicons name="arrow-up" color="#3DADE2" size={23} />
+                  ) : (
+                    <Ionicons name="arrow-down" color="#3DADE2" size={23} />
+                  )}
+                </HStack>
+              </Pressable>
+              {miniMap ? (
+                <Box flex={1} height={600}>
+                  <Input
+                    value={inputCoordinate}
+                    onChangeText={newText => setInputCoordinate(newText)}
+                    variant="filled"
+                    placeholder="silahkan masukkan alamat anda"
+                    fontSize={14}
+                    width="100%"
+                    color="#525252"
+                    bgColor="#FCFEFF"
+                    InputRightElement={
+                      <Pressable
+                        onPress={() => {
+                          getCoordinateFromInput();
+                        }}>
+                        <Ionicons name="search" color="#9098B1" size={23} />
+                      </Pressable>
+                    }
+                  />
+
+                  <MapView
+                    provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+                    style={{flex: 1}}
+                    region={{
+                      latitude: coordinateX,
+                      longitude: coordinateY,
+                      latitudeDelta: 0.01,
+                      longitudeDelta: 0.01,
+                    }}>
+                    {/* Draggable  Marker*/}
+
+                    {coordinateX == 0 ? (
+                      <></>
+                    ) : (
+                      <Marker
+                        draggable
+                        key={'input'}
+                        coordinate={{
+                          latitude: coordinateX,
+                          longitude: coordinateY,
+                        }}
+                        title={'input'}
+                        description={'Prengiriman'}
+                        onDragEnd={e =>
+                          // this.setState({x: e.nativeEvent.coordinate})
+                          // console.log(e.nativeEvent.coordinate)
+                          this.getAddress(e)
+                        }
+                      />
+                    )}
+                  </MapView>
+
+                  <Fab
+                    renderInPortal={false}
+                    shadow={2}
+                    size="sm"
+                    icon={
+                      <Ionicons name="locate-outline" color="#fff" size={23} />
+                    }
+                    onPress={() => {
+                      getLocation();
+                    }}
+                  />
+                </Box>
+              ) : (
+                <></>
+              )}
+            </Box>
           </Box>
           <Box
             mx={4}
@@ -563,7 +792,7 @@ const KeranjangScreen = ({route}) => {
                 Beli
               </Text>
             </Button>
-          ) : coordinate == '' ? (
+          ) : coordinateX == 0 && coordinateY == 0 ? (
             <Button
               isDisabled
               mx={4}

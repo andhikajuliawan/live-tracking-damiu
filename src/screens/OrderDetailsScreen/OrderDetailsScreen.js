@@ -76,17 +76,24 @@ const OrderDetailsScreen = ({route}) => {
         console.log(i);
 
         // Get Location
-        Geolocation.getCurrentPosition(info => {
-          set(ref(database, 'damiu-order/' + route.params.id.no_order), {
-            order_id: route.params.id.id,
-            no_order: route.params.id.no_order,
-            employee_name: userInfo.user.username,
-            destination_X: route.params.id.destination_X,
-            destination_Y: route.params.id.destination_Y,
-            coordinate_X: info.coords.latitude,
-            coordinate_Y: info.coords.longitude,
-          });
-        });
+        Geolocation.getCurrentPosition(
+          info => {
+            set(ref(database, 'damiu-order/' + route.params.id.no_order), {
+              order_id: route.params.id.id,
+              no_order: route.params.id.no_order,
+              employee_name: userInfo.user.username,
+              destination_X: route.params.id.destination_X,
+              destination_Y: route.params.id.destination_Y,
+              coordinate_X: info.coords.latitude,
+              coordinate_Y: info.coords.longitude,
+            });
+          },
+          error => {
+            // See error code charts below.
+            console.log(error.code, error.message);
+          },
+          {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+        );
         await sleep(delay);
       }
     });
@@ -103,7 +110,7 @@ const OrderDetailsScreen = ({route}) => {
     color: '#ff00ff',
     linkingURI: 'yourSchemeHere://chat/jane', // See Deep Linking for more info
     parameters: {
-      delay: 1000,
+      delay: 5000,
     },
   };
 

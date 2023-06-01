@@ -21,53 +21,36 @@ const AkunScreen = () => {
   // Untuk Logout
   const {userInfo, isLoading, logout} = useContext(AuthContext);
 
+  console.log(userInfo.user.user_category);
+
   return (
     <Box bgColor="#fff" flex={1}>
-      {/* <HStack mt={5} mb={4} alignItems="center" px={4}>
-        <Ionicons
-          name="chevron-back-outline"
-          size={25}
-          color="#9098B1"
-          onPress={() => {
-            navigation.goBack();
-          }}
-        />
-        <Text fontFamily="Poppins-Bold" fontSize={16} color="#223263" ml={3}>
-          Profile
-        </Text>
-      </HStack>
-      <Divider thickness={0.5} /> */}
       <Box px={4}>
         <HStack mt={10} alignItems="center" justifyContent="space-between">
           <HStack alignItems="center">
-            <Image
-              source={require('../../../assets/images/profile.png')}
-              borderRadius={100}
-              alt="profile"
-              size="sm"
-            />
+            <Box shadow="1" borderRadius="full">
+              <Image
+                source={require('../../../assets/images/icon-user.png')}
+                borderRadius="full"
+                alt="profile"
+                size="sm"
+              />
+            </Box>
+
             <VStack ml={3}>
               <Text color="#223263" fontFamily="Poppins-Bold" fontSize={16}>
-                {userInfo.information.customer_name}
+                {userInfo.user.user_category == 3
+                  ? userInfo.information.owner_name
+                  : userInfo.information.customer_name}
               </Text>
               <Text color="#9098B1" fontFamily="Poppins-Regular" fontSize={12}>
                 @{userInfo.information.username}
               </Text>
             </VStack>
           </HStack>
-          {/* <Ionicons
-            name="create-outline"
-            size={25}
-            color="#9098B1"
-            fontWeight="bold"
-            // onPress={onPressEditAkun}
-          /> */}
         </HStack>
-        <HStack
-          mt={50}
-          justifyContent="space-between"
-          alignItems="center"
-          width="100%">
+        <Divider my={5} thickness={0.5} />
+        <HStack justifyContent="space-between" alignItems="center" width="100%">
           <HStack width="40%">
             <Ionicons name="mail-outline" size={20} color="#3DADE2" />
             <Text
@@ -84,7 +67,9 @@ const AkunScreen = () => {
             color="#9098B1"
             fontFamily="Poppins-Regular"
             fontSize={12}>
-            {userInfo.information.customer_email}
+            {userInfo.user.user_category == 3
+              ? userInfo.information.owner_email
+              : userInfo.information.customer_email}
           </Text>
         </HStack>
         <HStack
@@ -108,7 +93,9 @@ const AkunScreen = () => {
             color="#9098B1"
             fontFamily="Poppins-Regular"
             fontSize={12}>
-            {userInfo.information.customer_phone}
+            {userInfo.user.user_category == 3
+              ? userInfo.information.owner_phone
+              : userInfo.information.customer_phone}
           </Text>
         </HStack>
         <HStack mt={4} justifyContent="space-between" width="100%">
@@ -129,11 +116,13 @@ const AkunScreen = () => {
             color="#9098B1"
             fontFamily="Poppins-Regular"
             fontSize={12}>
-            {userInfo.information.customer_address}
+            {userInfo.user.user_category == 3
+              ? userInfo.information.owner_address
+              : userInfo.information.customer_address}
           </Text>
         </HStack>
       </Box>
-      <Button mx={4} mt={8} bgColor="#3DADE2" onPress={logout}>
+      <Button mx={4} mt={20} bgColor="#3DADE2" onPress={logout}>
         Logout
       </Button>
     </Box>
