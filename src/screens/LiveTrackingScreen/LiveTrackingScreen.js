@@ -62,14 +62,13 @@ const LiveTrackingScreen = ({route}) => {
     // <
     <View h="full" backgroundColor="#fff">
       <HStack mt={5} mb={4} alignItems="center" px={4}>
-        <Ionicons
-          name="chevron-back-outline"
-          size={25}
-          color="#9098B1"
+        <TouchableOpacity
           onPress={() => {
             navigation.goBack();
-          }}
-        />
+          }}>
+          <Ionicons name="chevron-back-outline" size={25} color="#9098B1" />
+        </TouchableOpacity>
+
         <Text fontFamily="Poppins-Bold" fontSize={16} color="#223263" ml={3}>
           Proses Pengiriman
         </Text>

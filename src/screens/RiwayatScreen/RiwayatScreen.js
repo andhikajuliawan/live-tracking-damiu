@@ -9,6 +9,7 @@ import OrderDetailsScreen from '../OrderDetailsScreen';
 import {AuthContext} from '../../context/AuthContext';
 import axios from 'axios';
 import {BASE_URL} from '../../config';
+import {TouchableOpacity} from 'react-native';
 
 const RiwayatScreen = () => {
   const navigation = useNavigation();
@@ -45,14 +46,13 @@ const RiwayatScreen = () => {
   return (
     <Box bgColor="#fff" flex={1}>
       <HStack mt={5} mb={4} alignItems="center" px={4}>
-        <Ionicons
-          name="chevron-back-outline"
-          size={25}
-          color="#9098B1"
+        <TouchableOpacity
           onPress={() => {
             navigation.goBack();
-          }}
-        />
+          }}>
+          <Ionicons name="chevron-back-outline" size={25} color="#9098B1" />
+        </TouchableOpacity>
+
         <Text fontFamily="Poppins-Bold" fontSize={16} color="#223263" ml={3}>
           Riwayat
         </Text>

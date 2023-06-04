@@ -25,6 +25,7 @@ import Geolocation from 'react-native-geolocation-service';
 
 // Background Service
 import BackgroundService from 'react-native-background-actions';
+import {TouchableOpacity} from 'react-native';
 
 const OrderDetailsScreen = ({route}) => {
   const navigation = useNavigation();
@@ -124,14 +125,13 @@ const OrderDetailsScreen = ({route}) => {
   return (
     <Box bgColor="#fff" flex={1}>
       <HStack mt={5} mb={4} alignItems="center" px={4}>
-        <Ionicons
-          name="chevron-back-outline"
-          size={25}
-          color="#9098B1"
+        <TouchableOpacity
           onPress={() => {
             navigation.goBack();
-          }}
-        />
+          }}>
+          <Ionicons name="chevron-back-outline" size={25} color="#9098B1" />
+        </TouchableOpacity>
+
         <Text fontFamily="Poppins-Bold" fontSize={16} color="#223263" ml={3}>
           Order Details
         </Text>
@@ -187,7 +187,7 @@ const OrderDetailsScreen = ({route}) => {
             <Divider my={2} />
 
             {route.params.id.order_status == 'Dikirim' ? (
-              <Pressable onPress={onPressLihatUpdatePengiriman}>
+              <TouchableOpacity onPress={onPressLihatUpdatePengiriman}>
                 <HStack justifyContent="space-between">
                   <Text
                     fontSize={12}
@@ -202,7 +202,7 @@ const OrderDetailsScreen = ({route}) => {
                     color="#3DADE2"
                   />
                 </HStack>
-              </Pressable>
+              </TouchableOpacity>
             ) : route.params.id.order_status == 'Belum Diproses' ? (
               <Text
                 fontSize={12}

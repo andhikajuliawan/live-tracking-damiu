@@ -15,6 +15,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {AuthContext} from '../../../context/AuthContext';
 import axios from 'axios';
 import {BASE_URL} from '../../../config';
+import {TouchableOpacity} from 'react-native';
 
 const CustomListProduk = ({
   customer_id,
@@ -98,7 +99,7 @@ const CustomListProduk = ({
         </Text>
       </VStack>
       <Divider my={2} />
-      <Pressable onPress={onPressAddProduct1}>
+      <TouchableOpacity onPress={onPressAddProduct1}>
         <HStack
           py={2}
           mb={1}
@@ -113,7 +114,7 @@ const CustomListProduk = ({
             Keranjang
           </Text>
         </HStack>
-      </Pressable>
+      </TouchableOpacity>
       <AlertDialog
         leastDestructiveRef={cancelRef}
         isOpen={isOpen}

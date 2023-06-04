@@ -1,6 +1,7 @@
 import {HStack, Box, Input, Icon, Pressable} from 'native-base';
 
 import React from 'react';
+import {TouchableOpacity} from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -11,18 +12,15 @@ const CustomHeader = ({
   value,
   setValue,
   onPressSearch,
-  placeholder, 
-  keranjang
+  placeholder,
+  keranjang,
 }) => {
   return (
     <HStack justifyContent="space-between" my={4} alignItems="center">
       <HStack width="70%" alignItems="center">
-        <Ionicons
-          name="chevron-back-outline"
-          color="#9098B1"
-          size={30}
-          onPress={onPressBack}
-        />
+        <TouchableOpacity onPress={onPressBack}>
+          <Ionicons name="chevron-back-outline" color="#9098B1" size={30} />
+        </TouchableOpacity>
         <Input
           InputLeftElement={
             <Icon
@@ -45,14 +43,14 @@ const CustomHeader = ({
       </HStack>
       <HStack>
         <Ionicons name="mail" color="#3DADE2" size={25} onPress={onPressMail} />
-        {keranjang ? <><Box marginX={1}></Box>
-        <Ionicons
-          name="basket"
-          color="#3DADE2"
-          size={25}
-          onPress={onPressBasket}
-        /></> : null}
-        
+        {keranjang ? (
+          <>
+            <Box marginX={1}></Box>
+            <TouchableOpacity onPress={onPressBasket}>
+              <Ionicons name="basket" color="#3DADE2" size={25} />
+            </TouchableOpacity>
+          </>
+        ) : null}
       </HStack>
     </HStack>
   );

@@ -25,7 +25,7 @@ import {useNavigation} from '@react-navigation/native';
 import {AuthContext} from '../../context/AuthContext';
 import axios from 'axios';
 import {BASE_URL} from '../../config';
-import {FlatList, PermissionsAndroid} from 'react-native';
+import {FlatList, PermissionsAndroid, TouchableOpacity} from 'react-native';
 
 // untuk mendapatkan titik koordinat
 import Geolocation from 'react-native-geolocation-service';
@@ -243,21 +243,21 @@ const KeranjangScreen = ({route}) => {
     }
   };
 
-  const getCoordinate = () => {
-    hasLocationPermission();
-    if (hasLocationPermission) {
-      Geolocation.getCurrentPosition(
-        position => {
-          setCoordinate(position);
-        },
-        error => {
-          // See error code charts below.
-          console.log(error.code, error.message);
-        },
-        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-      );
-    }
-  };
+  // const getCoordinate = () => {
+  //   hasLocationPermission();
+  //   if (hasLocationPermission) {
+  //     Geolocation.getCurrentPosition(
+  //       position => {
+  //         setCoordinate(position);
+  //       },
+  //       error => {
+  //         // See error code charts below.
+  //         console.log(error.code, error.message);
+  //       },
+  //       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+  //     );
+  //   }
+  // };
 
   // Function untuk MiniMap
 
@@ -304,14 +304,13 @@ const KeranjangScreen = ({route}) => {
   return (
     <Box flex={1} bgColor="#fff">
       <HStack mt={5} mb={4} alignItems="center" px={4}>
-        <Ionicons
-          name="chevron-back-outline"
-          size={25}
-          color="#9098B1"
+        <TouchableOpacity
           onPress={() => {
             navigation.goBack();
-          }}
-        />
+          }}>
+          <Ionicons name="chevron-back-outline" size={25} color="#9098B1" />
+        </TouchableOpacity>
+
         <Text fontFamily="Poppins-Bold" fontSize={16} color="#223263" ml={3}>
           Keranjang
         </Text>
@@ -616,11 +615,11 @@ const KeranjangScreen = ({route}) => {
             )}
 
             <Box>
-              <Pressable
+              <TouchableOpacity
                 onPress={() => {
                   miniMap ? setMiniMap(false) : setMiniMap(true);
                 }}>
-                <HStack justifyContent="space-between">
+                <HStack justifyContent="space-between" my={2}>
                   <Text
                     fontSize={12}
                     fontFamily="Poppins-SemiBold"
@@ -634,7 +633,7 @@ const KeranjangScreen = ({route}) => {
                     <Ionicons name="arrow-down" color="#3DADE2" size={23} />
                   )}
                 </HStack>
-              </Pressable>
+              </TouchableOpacity>
               {miniMap ? (
                 <Box flex={1} height={600}>
                   <Input
@@ -643,16 +642,21 @@ const KeranjangScreen = ({route}) => {
                     variant="filled"
                     placeholder="silahkan masukkan alamat anda"
                     fontSize={14}
+                    mb={1}
                     width="100%"
                     color="#525252"
                     bgColor="#FCFEFF"
                     InputRightElement={
-                      <Pressable
-                        onPress={() => {
-                          getCoordinateFromInput();
-                        }}>
+                      inputCoordinate == '' ? (
                         <Ionicons name="search" color="#9098B1" size={23} />
-                      </Pressable>
+                      ) : (
+                        <TouchableOpacity
+                          onPress={() => {
+                            getCoordinateFromInput();
+                          }}>
+                          <Ionicons name="search" color="#3DADE2" size={23} />
+                        </TouchableOpacity>
+                      )
                     }
                   />
 
