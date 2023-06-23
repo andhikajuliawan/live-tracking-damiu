@@ -5,8 +5,8 @@ import {
   Divider,
   ScrollView,
   Spinner,
-  FlatList,
-  Button,
+  Skeleton,
+  VStack,
 } from 'native-base';
 import React, {useEffect, useState, useContext} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -218,6 +218,44 @@ const OrderScreen = () => {
 
   const {userInfo, isLoading, logout} = useContext(AuthContext);
 
+  // Untuk Skeleton
+  let skeletonPesanan = [];
+  for (let i = 0; i < 5; i++) {
+    skeletonPesanan.push(
+      <Box
+        mx={4}
+        px={5}
+        py={4}
+        bg="#fff"
+        borderRadius={10}
+        shadow={3}
+        mt={2}
+        mb={2}
+        key={i}>
+        <HStack justifyContent="space-between">
+          <Skeleton h={3} mb={3} rounded="full" width="60%" />
+          <Skeleton h={3} rounded="full" width="30%" />
+        </HStack>
+        <HStack justifyContent="space-between">
+          <Skeleton h={3} mb={3} rounded="full" width="60%" />
+          <Skeleton h={3} rounded="full" width="30%" />
+        </HStack>
+        <HStack justifyContent="space-between">
+          <Skeleton h={3} mb={3} rounded="full" width="60%" />
+          <Skeleton h={3} mb={3} rounded="full" width="30%" />
+        </HStack>
+        <Skeleton h={3} mb={3} rounded="full" width="30%" />
+
+        <Skeleton h={4} mb={3} rounded="full" />
+
+        <HStack justifyContent="space-between" alignItems="center">
+          <Skeleton w="30%" rounded="full" />
+          <Skeleton w="30%" rounded="full" />
+        </HStack>
+      </Box>,
+    );
+  }
+
   return (
     <Box bgColor="#fff" flex={1}>
       <HStack mt={5} mb={4} alignItems="center" px={4}>
@@ -259,7 +297,8 @@ const OrderScreen = () => {
       </Box>
 
       {isLoadingRiwayat ? (
-        <Spinner color="#3DADE2" flex={1} size="lg" />
+        // <Spinner color="#3DADE2" flex={1} size="lg" />
+        skeletonPesanan
       ) : (
         <ScrollView showsVerticalScrollIndicator={false} bgColor="#fff" mb={69}>
           {(categorie == 'Semua' ? listRiwayatPembelian : filterCategories).map(

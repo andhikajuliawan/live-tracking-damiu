@@ -6,8 +6,8 @@ import {
   HStack,
   VStack,
   Flex,
-  AlertDialog,
-  Button,
+  Skeleton,
+  Divider,
 } from 'native-base';
 import React, {useState, useEffect, useContext} from 'react';
 import {
@@ -26,8 +26,10 @@ import {useNavigation} from '@react-navigation/native';
 const ProdukScreen = ({route}) => {
   const [search, setSearch] = useState('');
   const [produkDepo, setProdukDepo] = useState([]);
+  const [isLoadingProduk, setIsLoadingProduk] = useState(false);
 
   useEffect(() => {
+    setIsLoadingProduk(true);
     axios
       .get(`${BASE_URL}/product/${route.params.depo_id}`, {
         headers: {Authorization: `Bearer ${userInfo.token}`},
@@ -38,6 +40,7 @@ const ProdukScreen = ({route}) => {
       .catch(e => {
         console.log(`register error ${e}`);
       });
+    setIsLoadingProduk(false);
 
     return () => {};
   }, []);
@@ -82,6 +85,33 @@ const ProdukScreen = ({route}) => {
   // membatasi teks di Place Holder
   const placeholder = `cari di ${route.params.nama} `;
 
+  // Untuk Skeleton
+  let listProduk = [];
+  for (let i = 0; i < 5; i++) {
+    listProduk.push(
+      <VStack
+        backgroundColor="#fff"
+        shadow={3}
+        width="45%"
+        my={2}
+        borderRadius={10}
+        pb={2}
+        key={i}>
+        <Skeleton h={128} borderTopRadius={10} />
+        <VStack px={3} mt={2}>
+          <Skeleton h={3} mb={3} rounded="full" />
+          <Skeleton h={4} mb={3} rounded="full" />
+
+          <Skeleton h={3} width="70%" rounded="full" />
+        </VStack>
+        <Divider my={2} />
+        <HStack py={1} mx={2} alignItems="center" justifyContent="center">
+          <Skeleton rounded="lg" h={9} startColor="#3DADE2" />
+        </HStack>
+      </VStack>,
+    );
+  }
+
   return (
     <Box px={3} flex={1} bgColor="#fff">
       <CustomHeader
@@ -118,28 +148,36 @@ const ProdukScreen = ({route}) => {
         </VStack>
       </HStack>
       <ScrollView bgColor="#fff" showsVerticalScrollIndicator={false}>
-        <Text fontFamily="Poppins-Bold" my={5}>
+        <Text
+          fontFamily="Poppins-Bold"
+          mb={2}
+          mt={5}
+          fontSize={14}
+          fontWeight="bold"
+          ml={2}>
           Semua Produk
         </Text>
         <Flex direction="row" flexWrap="wrap" justifyContent="space-around">
-          {produkDepo.map((produk, index) => {
-            console.log(index);
-            return (
-              <CustomListProduk
-                key={index}
-                source={produk}
-                // digunakan mengambil gambar
-                // gambar={produk.gambar}
-                customer_id={userInfo.information.id}
-                produk_id={produk.id}
-                depo_id={route.params.depo_id}
-                nama={produk.product_name}
-                harga={produk.product_price}
-                stock={produk.product_stock}
-                // onPressAddProduct={onPressAddProduct}
-              />
-            );
-          })}
+          {isLoadingProduk
+            ? listProduk
+            : produkDepo.map((produk, index) => {
+                console.log(index);
+                return (
+                  <CustomListProduk
+                    key={index}
+                    source={produk}
+                    // digunakan mengambil gambar
+                    // gambar={produk.gambar}
+                    customer_id={userInfo.information.id}
+                    produk_id={produk.id}
+                    depo_id={route.params.depo_id}
+                    nama={produk.product_name}
+                    harga={produk.product_price}
+                    stock={produk.product_stock}
+                    // onPressAddProduct={onPressAddProduct}
+                  />
+                );
+              })}
         </Flex>
       </ScrollView>
     </Box>

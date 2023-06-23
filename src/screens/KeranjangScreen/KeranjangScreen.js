@@ -14,6 +14,7 @@ import {
   Input,
   View,
   Fab,
+  Toast,
 } from 'native-base';
 import React, {useEffect, useState, useContext} from 'react';
 
@@ -277,6 +278,7 @@ const KeranjangScreen = ({route}) => {
       );
     }
   };
+
   getCoordinateFromInput = () => {
     fetch(
       'https://maps.googleapis.com/maps/api/geocode/json?&address=' +
@@ -293,8 +295,20 @@ const KeranjangScreen = ({route}) => {
         setCoordinateX(responseJson.results[0].geometry.location.lat);
 
         setCoordinateY(responseJson.results[0].geometry.location.lng);
+      })
+      .catch(e => {
+        Toast.show({
+          render: () => {
+            return (
+              <Box bg="#3DADE2" px={8} py={2} rounded="sm" mb={2} shadow={1}>
+                <Text color="#fff">Alamat tidak tersedia</Text>
+              </Box>
+            );
+          },
+        });
       });
   };
+
   getAddress = e => {
     console.log(e.nativeEvent.coordinate);
     setCoordinateX(e.nativeEvent.coordinate.latitude);
@@ -687,8 +701,15 @@ const KeranjangScreen = ({route}) => {
                           // this.setState({x: e.nativeEvent.coordinate})
                           // console.log(e.nativeEvent.coordinate)
                           this.getAddress(e)
-                        }
-                      />
+                        }>
+                        <Image
+                          source={require('../../../assets/images/marker-tujuan.png')}
+                          alt="lokasi pengiriman"
+                          w={35}
+                          h={35}
+                          resizeMode="contain"
+                        />
+                      </Marker>
                     )}
                   </MapView>
 
@@ -696,6 +717,7 @@ const KeranjangScreen = ({route}) => {
                     renderInPortal={false}
                     shadow={2}
                     size="sm"
+                    // bgColor="#3DADE2"
                     icon={
                       <Ionicons name="locate-outline" color="#fff" size={23} />
                     }

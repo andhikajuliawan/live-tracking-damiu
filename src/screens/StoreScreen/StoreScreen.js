@@ -1,4 +1,12 @@
-import {View, Text, Box, ScrollView} from 'native-base';
+import {
+  View,
+  Text,
+  Box,
+  ScrollView,
+  HStack,
+  Skeleton,
+  VStack,
+} from 'native-base';
 import React, {useContext, useEffect, useState} from 'react';
 import {CustomDepoTerdekat, CustomHeader} from '../../components/Store';
 
@@ -12,6 +20,7 @@ import {BASE_URL} from '../../config';
 const StoreScreen = () => {
   const [search, setSearch] = useState('');
   const [listDepo, setListDepo] = useState([]);
+  const [isLoadingDepo, setIsLoadingDepo] = useState(false);
 
   const navigation = useNavigation();
 
@@ -29,7 +38,33 @@ const StoreScreen = () => {
     navigation.navigate('Riwayat');
   };
 
+  // Untuk Skeleton
+  let depoTerdekat = [];
+  for (let i = 0; i < 10; i++) {
+    depoTerdekat.push(
+      <Box
+        marginX={0.5}
+        bgColor="white"
+        marginBottom={2}
+        shadow={1}
+        rounded={9}
+        key={i}>
+        <HStack alignItems="center" justifyContent="space-around" mx={3} my={2}>
+          <HStack alignItems="center">
+            <Skeleton size="65" rounded="sm" />
+
+            <VStack marginLeft={2} width="70%">
+              <Skeleton.Text />
+            </VStack>
+          </HStack>
+          <Skeleton size={30} rounded="sm" />
+        </HStack>
+      </Box>,
+    );
+  }
+
   useEffect(() => {
+    setIsLoadingDepo(true);
     axios
       .get(`${BASE_URL}/depo`, {
         headers: {Authorization: `Bearer ${userInfo.token}`},
@@ -40,6 +75,7 @@ const StoreScreen = () => {
       .catch(e => {
         console.log(`register error ${e}`);
       });
+    setIsLoadingDepo(false);
 
     // fetch(`https://damiusite.com/example-damiu/api/depo`, {
     //   headers: {Authorization: `Bearer ${userInfo.token}`},
@@ -83,21 +119,23 @@ const StoreScreen = () => {
         <Text fontSize={14} fontWeight="bold" my={3}>
           Depo Terdekat Untuk Anda
         </Text>
-        {listDepo.map((depo, index) => (
-          <CustomDepoTerdekat
-            key={index}
-            source={depo}
-            nama={depo.depo_name}
-            alamat={depo.depo_city}
-            onPressDepo={() => {
-              navigation.navigate('Produk', {
-                nama: depo.depo_name,
-                alamat: depo.depo_city,
-                depo_id: depo.id,
-              });
-            }}
-          />
-        ))}
+        {isLoadingDepo
+          ? depoTerdekat
+          : listDepo.map((depo, index) => (
+              <CustomDepoTerdekat
+                key={index}
+                source={depo}
+                nama={depo.depo_name}
+                alamat={depo.depo_city}
+                onPressDepo={() => {
+                  navigation.navigate('Produk', {
+                    nama: depo.depo_name,
+                    alamat: depo.depo_city,
+                    depo_id: depo.id,
+                  });
+                }}
+              />
+            ))}
       </ScrollView>
     </Box>
   );

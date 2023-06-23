@@ -122,6 +122,18 @@ const OrderDetailsScreen = ({route}) => {
     await BackgroundService.stop();
   };
 
+  // Make to Rupiah
+  let number_string = route.params.id.order_price.toString(),
+    sisa = number_string.length % 3,
+    rupiah = number_string.substr(0, sisa),
+    ribuan = number_string.substr(sisa).match(/\d{3}/g);
+
+  if (ribuan) {
+    separator = sisa ? '.' : '';
+    rupiah += separator + ribuan.join('.');
+  }
+  let toRupiah = rupiah;
+
   return (
     <Box bgColor="#fff" flex={1}>
       <HStack mt={5} mb={4} alignItems="center" px={4}>
@@ -310,7 +322,7 @@ const OrderDetailsScreen = ({route}) => {
                   color="#000"
                   width="60%"
                   textAlign="left">
-                  Rp. {route.params.id.order_price}
+                  Rp. {toRupiah}
                 </Text>
               </HStack>
             </HStack>

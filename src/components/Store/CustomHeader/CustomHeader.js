@@ -44,13 +44,14 @@ const CustomHeader = ({
       <HStack>
         <Ionicons name="mail" color="#3DADE2" size={25} onPress={onPressMail} />
         {keranjang ? (
-          <>
-            <Box marginX={1}></Box>
+          <Box marginX={1}>
             <TouchableOpacity onPress={onPressBasket}>
               <Ionicons name="basket" color="#3DADE2" size={25} />
             </TouchableOpacity>
-          </>
-        ) : null}
+          </Box>
+        ) : (
+          <></>
+        )}
       </HStack>
     </HStack>
   );

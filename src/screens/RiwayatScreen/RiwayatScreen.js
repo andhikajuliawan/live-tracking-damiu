@@ -1,4 +1,13 @@
-import {Text, Box, HStack, Divider, ScrollView, Spinner} from 'native-base';
+import {
+  Text,
+  Box,
+  HStack,
+  Divider,
+  ScrollView,
+  Spinner,
+  Skeleton,
+  VStack,
+} from 'native-base';
 import React, {useEffect, useState, useContext} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CustomListPembelian from '../../components/Riwayat/CustomListPembelian/CustomListPembelian';
@@ -15,11 +24,11 @@ const RiwayatScreen = () => {
   const navigation = useNavigation();
 
   const [listRiwayatPembelian, setListRiwayatPembelian] = useState([]);
-  const [isLoadingRiwayat, setIsLoadingRiwayat] = useState(false);
+  const [isLoadingRiwayat, setIsLoadingRiwayat] = useState(true);
 
   useEffect(() => {
     setIsLoadingRiwayat(true);
-    console.log(userInfo.information.id);
+    // console.log(userInfo.information.id);
     axios
       .get(`${BASE_URL}/history_order/ ${userInfo.information.id}`, {
         headers: {Authorization: `Bearer ${userInfo.token}`},
@@ -30,7 +39,7 @@ const RiwayatScreen = () => {
       .catch(e => {
         console.log(`register error ${e}`);
       });
-    console.log(listRiwayatPembelian);
+    // console.log(listRiwayatPembelian);
     setIsLoadingRiwayat(false);
 
     return () => {};
@@ -42,6 +51,44 @@ const RiwayatScreen = () => {
   };
 
   const {userInfo, isLoading, logout} = useContext(AuthContext);
+
+  // Untuk Skeleton
+  let skeletonRiwayat = [];
+  for (let i = 0; i < 5; i++) {
+    skeletonRiwayat.push(
+      <Box
+        mx={4}
+        px={5}
+        py={4}
+        bg="#fff"
+        borderRadius={10}
+        shadow={3}
+        mt={2}
+        mb={2}
+        key={i}>
+        <HStack justifyContent="space-between">
+          <Skeleton h={3} mb={3} rounded="full" width="60%" />
+          <Skeleton h={3} rounded="full" width="30%" />
+        </HStack>
+        <HStack justifyContent="space-between">
+          <Skeleton h={3} mb={3} rounded="full" width="60%" />
+          <Skeleton h={3} rounded="full" width="30%" />
+        </HStack>
+        <HStack justifyContent="space-between">
+          <Skeleton h={3} mb={3} rounded="full" width="60%" />
+          <Skeleton h={3} mb={3} rounded="full" width="30%" />
+        </HStack>
+        <Skeleton h={3} mb={3} rounded="full" width="30%" />
+
+        <Skeleton h={4} mb={3} rounded="full" />
+
+        <HStack justifyContent="space-between" alignItems="center">
+          <Skeleton w="30%" rounded="full" />
+          {/* <Skeleton w="30%" rounded="full" /> */}
+        </HStack>
+      </Box>,
+    );
+  }
 
   return (
     <Box bgColor="#fff" flex={1}>
@@ -58,25 +105,23 @@ const RiwayatScreen = () => {
         </Text>
       </HStack>
       <Divider thickness={0.5} />
-      {isLoadingRiwayat ? (
-        <Spinner color="#3DADE2" flex={1} size="lg" />
-      ) : (
-        <ScrollView showsVerticalScrollIndicator={false} bgColor="#fff" mb={69}>
-          {listRiwayatPembelian.map((list, index) => (
-            <CustomListPembelian
-              key={index}
-              source={list}
-              order={list.no_order}
-              tanggal={list.order_datetime}
-              jumlah={list.order_total_product}
-              harga={list.order_price}
-              status={list.order_status}
-              alamat={list.order_location}
-              onPressDetails={() => onPressDeatils(list)}
-            />
-          ))}
-        </ScrollView>
-      )}
+      <ScrollView showsVerticalScrollIndicator={false} bgColor="#fff" mb={69}>
+        {isLoadingRiwayat
+          ? skeletonRiwayat
+          : listRiwayatPembelian.map((list, index) => (
+              <CustomListPembelian
+                key={index}
+                source={list}
+                order={list.no_order}
+                tanggal={list.order_datetime}
+                jumlah={list.order_total_product}
+                harga={list.order_price}
+                status={list.order_status}
+                alamat={list.order_location}
+                onPressDetails={() => onPressDeatils(list)}
+              />
+            ))}
+      </ScrollView>
     </Box>
   );
 };

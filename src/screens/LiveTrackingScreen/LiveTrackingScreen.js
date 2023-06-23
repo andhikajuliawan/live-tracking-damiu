@@ -6,7 +6,7 @@ import {
   ScrollView,
   Spinner,
   FlatList,
-  Button,
+  Image,
   View,
 } from 'native-base';
 import React, {useEffect, useState, useContext} from 'react';
@@ -144,8 +144,8 @@ const LiveTrackingScreen = ({route}) => {
             provider={PROVIDER_GOOGLE} // remove if not using Google Maps
             style={{flex: 1}}
             region={{
-              latitude: Number(firebaseData.destination_X),
-              longitude: Number(firebaseData.destination_Y),
+              latitude: Number(firebaseData.coordinate_X),
+              longitude: Number(firebaseData.coordinate_Y),
               latitudeDelta: 0.01,
               longitudeDelta: 0.01,
             }}>
@@ -156,9 +156,16 @@ const LiveTrackingScreen = ({route}) => {
                 latitude: Number(firebaseData.destination_X),
                 longitude: Number(firebaseData.destination_Y),
               }}
-              title={'Lokasi saya'}
-              description={'lokasi pengiriman'}
-            />
+              title={'Lokasi pengiriman'}
+              description={'lokasi pengiriman'}>
+              <Image
+                source={require('../../../assets/images/marker-tujuan.png')}
+                alt="lokasi pengiriman"
+                w={35}
+                h={35}
+                resizeMode="contain"
+              />
+            </Marker>
             <Marker
               pinColor="#FFEB3B"
               key={'driver'}
@@ -167,8 +174,15 @@ const LiveTrackingScreen = ({route}) => {
                 longitude: Number(firebaseData.coordinate_Y),
               }}
               title={'Driver'}
-              description={'Prengiriman'}
-            />
+              description={'Prengiriman'}>
+              <Image
+                source={require('../../../assets/images/marker-pengirim.png')}
+                alt="lokasi pengiriman"
+                w={35}
+                h={35}
+                resizeMode="contain"
+              />
+            </Marker>
             <MapViewDirections
               origin={{
                 latitude: Number(firebaseData.coordinate_X),

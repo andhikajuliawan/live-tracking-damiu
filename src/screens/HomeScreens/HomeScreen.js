@@ -7,9 +7,10 @@ import {
   ScrollView,
   Text,
   VStack,
+  Spinner,
+  Skeleton,
 } from 'native-base';
 import React, {useContext, useEffect, useState} from 'react';
-import Spinner from 'react-native-loading-spinner-overlay';
 
 // untuk keperluan axios
 import {AuthContext} from '../../context/AuthContext';
@@ -31,8 +32,10 @@ import {useNavigation} from '@react-navigation/native';
 const HomeScreen = () => {
   const navigation = useNavigation();
   const [listDepo, setListDepo] = useState([]);
+  const [isLoadingDepo, setIsLoadingDepo] = useState(false);
 
   useEffect(() => {
+    setIsLoadingDepo(true);
     axios
       .get(`${BASE_URL}/depo`, {
         headers: {Authorization: `Bearer ${userInfo.token}`},
@@ -43,6 +46,7 @@ const HomeScreen = () => {
       .catch(e => {
         console.log(`register error ${e}`);
       });
+    setIsLoadingDepo(false);
 
     return () => {};
   }, []);
@@ -64,7 +68,7 @@ const HomeScreen = () => {
     console.warn('Lihat Semua');
   };
   const onPressDepo = depo => {
-    console.warn('Lihat Depo');
+    // console.warn('Lihat Depo');
     navigation.navigate('Produk', {
       nama: depo.depo_name,
       alamat: depo.depo_city,
@@ -76,15 +80,30 @@ const HomeScreen = () => {
   const {userInfo, isLoading, logout, listDepos, getListDepo} =
     useContext(AuthContext);
 
-  // Data Dummy Store
-  // const listDepoDumy = [];
-  // for (let index = 0; index < 10; index++) {
-  //   listDepo.push({
-  //     nama: 'Depo Mama Ami ke - ' + [index],
-  //     alamat: 'Jalan Wagir RT ' + [index] + ' RW ' + [index] + ' - Sidoarjo',
-  //     jarak: [index] + ' km',
-  //   });
-  // }
+  // Untuk Skeleton
+  let depoTerdekat = [];
+  for (let i = 0; i < 3; i++) {
+    depoTerdekat.push(
+      <Box
+        marginX={4}
+        bgColor="white"
+        marginBottom={2}
+        shadow={1}
+        rounded={9}
+        key={i}>
+        <HStack alignItems="center" justifyContent="space-around" mx={3} my={2}>
+          <HStack alignItems="center">
+            <Skeleton size="65" rounded="sm" />
+
+            <VStack marginLeft={2} width="70%">
+              <Skeleton.Text />
+            </VStack>
+          </HStack>
+          <Skeleton size={30} rounded="sm" />
+        </HStack>
+      </Box>,
+    );
+  }
 
   return (
     <Box bgColor="#fff" flex={1}>
@@ -142,22 +161,25 @@ const HomeScreen = () => {
         <Text fontSize={14} fontWeight="bold" marginX={4} mb={3}>
           Depo Terdekat Untuk Anda
         </Text>
-        {listDepo.map((depo, index) => (
-          <CustomDepoTerdekat
-            key={index}
-            source={depo}
-            nama={depo.depo_name}
-            alamat={depo.depo_city}
-            // onPressDepo={() => {
-            //   navigation.navigate('Produk', {
-            //     nama: depo.depo_name,
-            //     alamat: depo.depo_city,
-            //     depo_id: depo.id,
-            //   });
-            // }}
-            onPressDepo={() => onPressDepo(depo)}
-          />
-        ))}
+        {isLoadingDepo
+          ? // <Spinner color="cyan.500" />
+            depoTerdekat
+          : listDepo.map((depo, index) => (
+              <CustomDepoTerdekat
+                key={index}
+                source={depo}
+                nama={depo.depo_name}
+                alamat={depo.depo_city}
+                // onPressDepo={() => {
+                //   navigation.navigate('Produk', {
+                //     nama: depo.depo_name,
+                //     alamat: depo.depo_city,
+                //     depo_id: depo.id,
+                //   });
+                // }}
+                onPressDepo={() => onPressDepo(depo)}
+              />
+            ))}
       </ScrollView>
     </Box>
   );

@@ -8,6 +8,8 @@ import {
   Pressable,
   AlertDialog,
   Button,
+  Box,
+  Center,
 } from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -63,6 +65,17 @@ const CustomListProduk = ({
       });
   };
 
+  // Make to Rupiah
+  let number_string = harga.toString(),
+    sisa = number_string.length % 3,
+    rupiah = number_string.substr(0, sisa),
+    ribuan = number_string.substr(sisa).match(/\d{3}/g);
+  if (ribuan) {
+    separator = sisa ? '.' : '';
+    rupiah += separator + ribuan.join('.');
+  }
+  let toRupiah = rupiah;
+
   const {userInfo, isLoading, logout} = useContext(AuthContext);
 
   return (
@@ -89,7 +102,7 @@ const CustomListProduk = ({
           {nama}
         </Text>
         <Text fontFamily="Poppins-Bold" fontSize={14} color="#3DADE2">
-          Rp {harga}
+          Rp {toRupiah}
         </Text>
         <Text
           fontFamily="Poppins-Regular"
@@ -105,8 +118,8 @@ const CustomListProduk = ({
           mb={1}
           mx={2}
           bgColor="#3DADE2"
-          borderBottomRightRadius={10}
-          borderTopLeftRadius={10}
+          borderRadius={10}
+          // borderTopLeftRadius={10}
           alignItems="center"
           justifyContent="center">
           <Ionicons name="add-outline" color="white" size={20} />
@@ -123,7 +136,6 @@ const CustomListProduk = ({
           <AlertDialog.Body>
             <VStack textAlign="center">
               <HStack justifyContent="center">
-                <Text></Text>
                 <Image
                   source={require('../../../../assets/images/successIcon.png')}
                   alt="successIcon"
@@ -131,19 +143,21 @@ const CustomListProduk = ({
                   height={10}
                   resizeMode="stretch"
                 />
-                <Text></Text>
               </HStack>
 
               <Text textAlign="center" my={3}>
                 Barang berhasil ditambahkan
               </Text>
-              <Button
-                borderRadius={50}
-                size="sm"
-                bgColor="#3DADE2"
-                onPress={onClose}>
-                oke
-              </Button>
+              <TouchableOpacity onPress={onClose}>
+                <Box
+                  borderRadius={50}
+                  bgColor="#3DADE2"
+                  alignItems="center"
+                  py={2}
+                  width="100%">
+                  <Text color="#fff">Oke</Text>
+                </Box>
+              </TouchableOpacity>
             </VStack>
           </AlertDialog.Body>
         </AlertDialog.Content>
