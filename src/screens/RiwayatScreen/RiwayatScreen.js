@@ -27,8 +27,6 @@ const RiwayatScreen = () => {
   const [isLoadingRiwayat, setIsLoadingRiwayat] = useState(true);
 
   useEffect(() => {
-    setIsLoadingRiwayat(true);
-    // console.log(userInfo.information.id);
     axios
       .get(`${BASE_URL}/history_order/ ${userInfo.information.id}`, {
         headers: {Authorization: `Bearer ${userInfo.token}`},
@@ -38,10 +36,10 @@ const RiwayatScreen = () => {
 
       .catch(e => {
         console.log(`register error ${e}`);
+      })
+      .finally(() => {
+        setIsLoadingRiwayat(false);
       });
-    // console.log(listRiwayatPembelian);
-    setIsLoadingRiwayat(false);
-
     return () => {};
   }, []);
 

@@ -32,7 +32,7 @@ const OrderScreen = () => {
   const navigation = useNavigation();
 
   const [listRiwayatPembelian, setListRiwayatPembelian] = useState([]);
-  const [isLoadingRiwayat, setIsLoadingRiwayat] = useState(false);
+  const [isLoadingRiwayat, setIsLoadingRiwayat] = useState(true);
   const [activeCategories, setActiveCategories] = useState(0);
   const [filterCategories, setfilterCategories] = useState([]);
   const [categorie, setCategorie] = useState('Semua');
@@ -40,18 +40,13 @@ const OrderScreen = () => {
   const [coordinate, setCoordinate] = useState([]);
 
   useEffect(() => {
-    setIsLoadingRiwayat(true);
-    console.log(userInfo.information.depo_id);
     getOrderDepo();
-    setIsLoadingRiwayat(false);
-
     setfilterCategories(listRiwayatPembelian);
 
     return () => {};
   }, []);
 
   const getOrderDepo = () => {
-    setIsLoadingRiwayat(true);
     axios
       .get(`${BASE_URL}/history_order_depo/ ${userInfo.information.depo_id}`, {
         headers: {Authorization: `Bearer ${userInfo.token}`},
@@ -61,8 +56,10 @@ const OrderScreen = () => {
 
       .catch(e => {
         console.log(`register error ${e}`);
+      })
+      .finally(() => {
+        setIsLoadingRiwayat(false);
       });
-    setIsLoadingRiwayat(false);
   };
 
   const onPressCategories = (index, item) => {

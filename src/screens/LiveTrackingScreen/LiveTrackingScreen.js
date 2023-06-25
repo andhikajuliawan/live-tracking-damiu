@@ -8,6 +8,7 @@ import {
   FlatList,
   Image,
   View,
+  Skeleton,
 } from 'native-base';
 import React, {useEffect, useState, useContext} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -38,7 +39,6 @@ const LiveTrackingScreen = ({route}) => {
   const {userInfo, logout} = useContext(AuthContext);
 
   useEffect(() => {
-    setIsLoading(true);
     const starCountRef = ref(database, 'damiu-order/');
     onValue(starCountRef, snapshot => {
       const data = snapshot.val();
@@ -76,16 +76,26 @@ const LiveTrackingScreen = ({route}) => {
       <Divider thickness={0.5} />
       {isLoading ? (
         <>
-          <Spinner color="cyan.500" flex={1} size="lg" />
+          {/* <Spinner color="cyan.500" flex={1} size="lg" /> */}
+          <Box px={8} pb={3} bg="#fff" pt={3}>
+            <HStack justifyContent="space-between" mb={3}>
+              <Skeleton h={3} rounded="full" w="50%" />
+              <Skeleton h={3} rounded="full" w="40%" />
+            </HStack>
+            <HStack justifyContent="space-between" mb={3}>
+              <Skeleton h={3} rounded="full" w="40%" />
+              <Skeleton h={3} rounded="full" w="40%" />
+            </HStack>
+            <HStack justifyContent="space-between" mb={3}>
+              <Skeleton h={3} rounded="full" w="40%" />
+              <Skeleton h={3} rounded="full" w="30%" />
+            </HStack>
+          </Box>
+          <Skeleton flex={1} />
         </>
       ) : (
         <>
-          <Box
-            // mx={4}
-            px={8}
-            pb={3}
-            bg="#fff"
-            pt={3}>
+          <Box px={8} pb={3} bg="#fff" pt={3}>
             <HStack justifyContent="space-between">
               <Text
                 fontSize={14}
@@ -159,7 +169,7 @@ const LiveTrackingScreen = ({route}) => {
               title={'Lokasi pengiriman'}
               description={'lokasi pengiriman'}>
               <Image
-                source={require('../../../assets/images/marker-tujuan.png')}
+                source={require('../../../assets/images/rumah.png')}
                 alt="lokasi pengiriman"
                 w={35}
                 h={35}
@@ -176,7 +186,7 @@ const LiveTrackingScreen = ({route}) => {
               title={'Driver'}
               description={'Prengiriman'}>
               <Image
-                source={require('../../../assets/images/marker-pengirim.png')}
+                source={require('../../../assets/images/kurir.png')}
                 alt="lokasi pengiriman"
                 w={35}
                 h={35}

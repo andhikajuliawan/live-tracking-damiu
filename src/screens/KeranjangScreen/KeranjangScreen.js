@@ -41,7 +41,7 @@ const KeranjangScreen = ({route}) => {
   const [listKeranjang, setListKeranjang] = useState([]);
   const [hargaOngkosKirim, setHargaOngkosKirim] = useState([]);
   // const [hargaSubTotal, setHargaSubTotal] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [alamat, setAlamat] = useState('');
   const [notes, setNotes] = useState('');
   const [coordinate, setCoordinate] = useState([]);
@@ -69,7 +69,7 @@ const KeranjangScreen = ({route}) => {
   }, []);
 
   const getListCartProduk = () => {
-    setIsLoading(true);
+    // setIsLoading(true);
     axios
       .get(`${BASE_URL}/cart/${route.params.depo_id}`, {
         headers: {Authorization: `Bearer ${userInfo.token}`},
@@ -78,8 +78,10 @@ const KeranjangScreen = ({route}) => {
       .then(data => setListKeranjang(data.cart))
       .catch(e => {
         console.log(`register error ${e}`);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-    setIsLoading(false);
     // console.log(listKeranjang);
   };
 

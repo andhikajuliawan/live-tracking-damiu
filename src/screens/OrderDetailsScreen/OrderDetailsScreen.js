@@ -31,13 +31,12 @@ const OrderDetailsScreen = ({route}) => {
   const navigation = useNavigation();
 
   const [listProduk, setListProduk] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const {userInfo} = useContext(AuthContext);
 
   useEffect(() => {
     console.log(userInfo.user.user_category);
-    setIsLoading(true);
     axios
       .get(`${BASE_URL}/customer_order_detail/ ${route.params.id.id}`, {
         headers: {Authorization: `Bearer ${userInfo.token}`},
@@ -47,8 +46,10 @@ const OrderDetailsScreen = ({route}) => {
 
       .catch(e => {
         console.log(`register error ${e}`);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-    setIsLoading(false);
 
     return () => {};
   }, []);
@@ -327,9 +328,23 @@ const OrderDetailsScreen = ({route}) => {
               </HStack>
             </HStack>
           </Box>
+          {userInfo.user.user_category == 4 ? (
+            ''
+          ) : route.params.id.order_status == 'Dikirim' ? (
+            <>
+              <Button mx={3} my={3} onPress={backgroundServiceOn}>
+                Mulai Tracking
+              </Button>
+              <Button mx={3} onPress={backgroundServiceOff}>
+                Stop Tracking
+              </Button>
+            </>
+          ) : (
+            ''
+          )}
         </>
       )}
-      {userInfo.user.user_category == 4 ? (
+      {/* {userInfo.user.user_category == 4 ? (
         ''
       ) : route.params.id.order_status == 'Dikirim' ? (
         <>
@@ -342,7 +357,7 @@ const OrderDetailsScreen = ({route}) => {
         </>
       ) : (
         ''
-      )}
+      )} */}
     </Box>
   );
 };

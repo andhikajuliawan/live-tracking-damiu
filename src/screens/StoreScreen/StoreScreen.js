@@ -20,7 +20,7 @@ import {BASE_URL} from '../../config';
 const StoreScreen = () => {
   const [search, setSearch] = useState('');
   const [listDepo, setListDepo] = useState([]);
-  const [isLoadingDepo, setIsLoadingDepo] = useState(false);
+  const [isLoadingDepo, setIsLoadingDepo] = useState(true);
 
   const navigation = useNavigation();
 
@@ -64,7 +64,6 @@ const StoreScreen = () => {
   }
 
   useEffect(() => {
-    setIsLoadingDepo(true);
     axios
       .get(`${BASE_URL}/depo`, {
         headers: {Authorization: `Bearer ${userInfo.token}`},
@@ -74,8 +73,10 @@ const StoreScreen = () => {
 
       .catch(e => {
         console.log(`register error ${e}`);
+      })
+      .finally(() => {
+        setIsLoadingDepo(false);
       });
-    setIsLoadingDepo(false);
 
     // fetch(`https://damiusite.com/example-damiu/api/depo`, {
     //   headers: {Authorization: `Bearer ${userInfo.token}`},
@@ -87,16 +88,6 @@ const StoreScreen = () => {
 
     return () => {};
   }, []);
-
-  // Data Dummy Store
-  // const listDepodummy = [];
-  // for (let index = 0; index < 10; index++) {
-  //   listDepo.push({
-  //     nama: 'Depo Mama Ami ke - ' + [index],
-  //     alamat: 'Jalan Wagir RT ' + [index] + ' RW ' + [index] + ' - Sidoarjo',
-  //     jarak: [index] + ' km',
-  //   });
-  // }
 
   // Untuk Logout
   const {userInfo, isLoading, logout} = useContext(AuthContext);

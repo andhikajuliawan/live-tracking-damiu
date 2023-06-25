@@ -39,8 +39,10 @@ const ProdukScreen = ({route}) => {
 
       .catch(e => {
         console.log(`register error ${e}`);
+      })
+      .finally(() => {
+        setIsLoadingProduk(false);
       });
-    setIsLoadingProduk(false);
 
     return () => {};
   }, []);

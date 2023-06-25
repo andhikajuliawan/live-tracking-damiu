@@ -32,10 +32,9 @@ import {useNavigation} from '@react-navigation/native';
 const HomeScreen = () => {
   const navigation = useNavigation();
   const [listDepo, setListDepo] = useState([]);
-  const [isLoadingDepo, setIsLoadingDepo] = useState(false);
+  const [isLoadingDepo, setIsLoadingDepo] = useState(true);
 
   useEffect(() => {
-    setIsLoadingDepo(true);
     axios
       .get(`${BASE_URL}/depo`, {
         headers: {Authorization: `Bearer ${userInfo.token}`},
@@ -45,9 +44,10 @@ const HomeScreen = () => {
 
       .catch(e => {
         console.log(`register error ${e}`);
+      })
+      .finally(() => {
+        setIsLoadingDepo(false);
       });
-    setIsLoadingDepo(false);
-
     return () => {};
   }, []);
 
@@ -164,7 +164,9 @@ const HomeScreen = () => {
         {isLoadingDepo
           ? // <Spinner color="cyan.500" />
             depoTerdekat
-          : listDepo.map((depo, index) => (
+          : // depoTerdekat
+            // <></>
+            listDepo.map((depo, index) => (
               <CustomDepoTerdekat
                 key={index}
                 source={depo}
