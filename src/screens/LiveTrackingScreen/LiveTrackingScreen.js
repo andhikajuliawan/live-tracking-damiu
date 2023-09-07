@@ -30,6 +30,7 @@ import {AuthContext} from '../../context/AuthContext';
 import axios from 'axios';
 import {BASE_URL} from '../../config';
 import {CustomListOrder} from '../../components/Riwayat';
+import { API_KEY } from '../../apikey';
 
 const LiveTrackingScreen = ({route}) => {
   const navigation = useNavigation();
@@ -202,7 +203,7 @@ const LiveTrackingScreen = ({route}) => {
                 latitude: Number(firebaseData.destination_X),
                 longitude: Number(firebaseData.destination_Y),
               }}
-              apikey={'AIzaSyC_TYQGvtlUhwyhc2umVM-GjsgFjJk0j-Y'}
+              apikey={API_KEY}
               strokeWidth={5}
               strokeColor="#4A89F3"
             />

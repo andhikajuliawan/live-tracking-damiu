@@ -34,6 +34,7 @@ import Geolocation from 'react-native-geolocation-service';
 // Untuk Google Maps API
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import {Marker} from 'react-native-maps';
+import { API_KEY } from '../../apikey';
 
 const KeranjangScreen = ({route}) => {
   const navigation = useNavigation();
@@ -285,7 +286,7 @@ const KeranjangScreen = ({route}) => {
     fetch(
       'https://maps.googleapis.com/maps/api/geocode/json?&address=' +
         inputCoordinate +
-        '&key=AIzaSyC_TYQGvtlUhwyhc2umVM-GjsgFjJk0j-Y',
+        `${API_KEY}`,
     )
       .then(response => response.json())
       .then(responseJson => {
